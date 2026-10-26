@@ -814,7 +814,7 @@ export default class DigimonRoom {
       pedestal.scanRing.material.color.setHex(color);
     }
 
-    const desiredRotation = -PEDESTALS[safeIndex].angle;
+    const desiredRotation = PEDESTALS[safeIndex].angle;
     if (immediate) {
       this.carousel.rotation.y = desiredRotation;
       this.targetCarouselRotation = desiredRotation;
