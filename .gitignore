@@ -28,6 +28,10 @@ pnpm-debug.log*
 *.tmp
 *.temp
 
+# Modelos locais sem autorizacao de redistribuicao
+public/models/babys/
+public/models/agumon_bond_of_bravery.glb
+
 # Sistema e editores
 .DS_Store
 Thumbs.db

@@ -3,56 +3,411 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>game-ia</title>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        background: #06080f;
-        color: #c7d2fe;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      }
-
-      body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 16px;
-      }
-
-      #game {
-        width: min(100%, 960px);
-        aspect-ratio: 16 / 9;
-        border: 1px solid #1e2a4a;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-      }
-
-      #game canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-
-      .hint {
-        margin: 0;
-        font-size: 14px;
-        letter-spacing: 0.02em;
-        opacity: 0.75;
-      }
-    </style>
+    <meta name="theme-color" content="#071426" />
+    <meta
+      name="description"
+      content="Crie seu Tamer e acesse a sala de evolução dos Digimons em uma experiência 3D."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>game-ia — Criação de Tamer</title>
   </head>
   <body>
     <div id="game"></div>
-    <p class="hint">Use WASD ou as setas do teclado para mover o quadrado azul.</p>
+
+    <div id="tamer-ui" class="ui">
+      <div class="ui-vignette" aria-hidden="true"></div>
+      <div class="ui-scanlines" aria-hidden="true"></div>
+
+      <section id="loading-screen" class="loading-screen" aria-live="polite">
+        <div class="loading-mark" aria-hidden="true">
+          <span></span>
+        </div>
+        <p class="eyebrow">// CONEXÃO AO NÚCLEO</p>
+        <p id="loading-label" class="loading-label">SINCRONIZANDO TAMER</p>
+        <div class="loading-track" aria-hidden="true">
+          <span id="loading-bar"></span>
+        </div>
+        <p id="loading-percent" class="loading-percent">0%</p>
+      </section>
+
+      <section id="creation-panel" class="creation-panel" hidden>
+        <div class="panel-frame">
+          <p class="eyebrow"><span>//</span> TERMINAL DE REGISTRO</p>
+          <h1>CRIE SEU <span>TAMER</span></h1>
+          <p class="panel-subtitle">
+            Registre sua identidade para acessar a sala de evolução.
+          </p>
+
+          <div id="saved-tamer" class="saved-tamer" hidden>
+            <div class="saved-copy">
+              <span>TAMER SALVO</span>
+              <strong id="saved-name">—</strong>
+            </div>
+            <button
+              id="continue-button"
+              class="button button-secondary"
+              type="button"
+            >
+              CONTINUAR
+            </button>
+          </div>
+
+          <div id="saved-divider" class="panel-divider" hidden>
+            <span>OU CRIE UM NOVO TAMER</span>
+          </div>
+
+          <form id="tamer-form" novalidate>
+            <label for="tamer-name">NOME DO TAMER</label>
+            <div class="input-shell">
+              <input
+                id="tamer-name"
+                name="tamerName"
+                type="text"
+                minlength="3"
+                maxlength="16"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Digite seu nome"
+              />
+              <span id="name-count">0/16</span>
+            </div>
+            <p id="name-error" class="field-error" role="alert"></p>
+            <button id="confirm-button" class="button button-primary" type="submit">
+              <span>CONFIRMAR</span>
+              <small>INICIAR PROTOCOLO</small>
+            </button>
+          </form>
+
+          <p id="model-note" class="model-note" hidden></p>
+          <p class="panel-hint">3 a 16 caracteres · progresso salvo neste navegador</p>
+          <p class="credit-line">
+            Tamer 3D:
+            <a
+              href="https://sketchfab.com/3d-models/project-playtime-player-1157fba3cb29443580b8a4d2ee202ea5"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Project Playtime Player</a
+            >
+            por
+            <a
+              href="https://sketchfab.com/AlexCwoh"
+              target="_blank"
+              rel="noopener noreferrer"
+              >AlexCwoh</a
+            >
+            · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+          </p>
+        </div>
+      </section>
+
+      <div id="transition-overlay" class="transition-overlay" hidden>
+        <div class="transition-content">
+          <p class="eyebrow">// ACESSO AUTORIZADO</p>
+          <h2 id="transition-title">TAMER CONFIRMADO</h2>
+          <div class="transition-rule"></div>
+          <p id="transition-name" class="transition-name">—</p>
+          <p id="transition-note" class="transition-note">
+            Abrindo a sala dos Digimons...
+          </p>
+        </div>
+      </div>
+
+      <section id="room-ui" class="room-ui" hidden>
+        <div class="room-header">
+          <p class="eyebrow"><span>//</span> NÚCLEO DE EVOLUÇÃO</p>
+          <h2>ESCOLHA SEU <span>DIGIMON</span></h2>
+          <p class="room-notice">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span id="room-sync-label">SINCRONIZANDO PEDESTAIS</span>
+          </p>
+        </div>
+
+        <div class="tamer-badge">
+          <span>TAMER</span>
+          <strong id="room-tamer-name">—</strong>
+        </div>
+
+        <div class="carousel-controls" aria-label="Navegação dos pedestais">
+          <button
+            id="carousel-prev"
+            class="carousel-arrow"
+            type="button"
+            aria-label="Pedestal anterior"
+          >
+            ‹
+          </button>
+          <div id="carousel-dots" class="carousel-dots">
+            <button
+              class="carousel-dot is-active"
+              type="button"
+              data-carousel-index="0"
+              aria-label="Ir para o pedestal 1"
+              aria-current="true"
+            >
+              01
+            </button>
+            <button
+              class="carousel-dot"
+              type="button"
+              data-carousel-index="1"
+              aria-label="Ir para o pedestal 2"
+              aria-current="false"
+            >
+              02
+            </button>
+            <button
+              class="carousel-dot"
+              type="button"
+              data-carousel-index="2"
+              aria-label="Ir para o pedestal 3"
+              aria-current="false"
+            >
+              03
+            </button>
+          </div>
+          <button
+            id="carousel-next"
+            class="carousel-arrow"
+            type="button"
+            aria-label="Próximo pedestal"
+          >
+            ›
+          </button>
+        </div>
+        <p class="room-hint">CLIQUE NOS PEDESTAIS OU ARRASTE PARA NAVEGAR</p>
+
+        <aside
+          id="digimon-panel"
+          class="digimon-panel"
+          aria-label="Informações do Digimon"
+          hidden
+        >
+          <div class="digimon-panel-frame">
+            <p class="eyebrow"><span>//</span> ARQUIVO DIGIMON</p>
+
+            <div id="digimon-registry">
+              <div class="digimon-title-row">
+                <div>
+                  <h3 id="digimon-name">—</h3>
+                  <p id="digimon-kana">—</p>
+                </div>
+                <span id="digimon-number" class="digimon-index">01</span>
+              </div>
+
+              <div class="digimon-tags">
+                <span id="digimon-level-tag">—</span>
+                <span id="digimon-type-tag">—</span>
+                <span id="digimon-attribute-tag">—</span>
+              </div>
+
+              <div class="digimon-tabs" role="tablist" aria-label="Informações do Digimon">
+                <button
+                  id="tab-general"
+                  class="digimon-tab is-active"
+                  type="button"
+                  role="tab"
+                  data-digimon-tab="general"
+                  aria-selected="true"
+                  aria-controls="panel-general"
+                >
+                  GERAL
+                </button>
+                <button
+                  id="tab-status"
+                  class="digimon-tab"
+                  type="button"
+                  role="tab"
+                  data-digimon-tab="status"
+                  aria-selected="false"
+                  aria-controls="panel-status"
+                  tabindex="-1"
+                >
+                  STATUS
+                </button>
+                <button
+                  id="tab-evolution"
+                  class="digimon-tab"
+                  type="button"
+                  role="tab"
+                  data-digimon-tab="evolution"
+                  aria-selected="false"
+                  aria-controls="panel-evolution"
+                  tabindex="-1"
+                >
+                  EVOLUÇÃO
+                </button>
+                <button
+                  id="tab-description"
+                  class="digimon-tab"
+                  type="button"
+                  role="tab"
+                  data-digimon-tab="description"
+                  aria-selected="false"
+                  aria-controls="panel-description"
+                  tabindex="-1"
+                >
+                  DESCRIÇÃO
+                </button>
+              </div>
+
+              <div class="digimon-tab-content">
+                <div
+                  id="panel-general"
+                  class="digimon-tab-panel"
+                  role="tabpanel"
+                  aria-labelledby="tab-general"
+                  data-digimon-panel="general"
+                >
+                  <dl class="digimon-facts">
+                    <div>
+                      <dt>NÍVEL</dt>
+                      <dd id="field-level">—</dd>
+                    </div>
+                    <div>
+                      <dt>TIPO</dt>
+                      <dd id="field-type">—</dd>
+                    </div>
+                    <div>
+                      <dt>ATRIBUTO</dt>
+                      <dd id="field-attribute">—</dd>
+                    </div>
+                    <div>
+                      <dt>GOLPE</dt>
+                      <dd>
+                        <span id="field-attack">—</span>
+                        <small id="field-attack-original"></small>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div
+                  id="panel-status"
+                  class="digimon-tab-panel"
+                  role="tabpanel"
+                  aria-labelledby="tab-status"
+                  data-digimon-panel="status"
+                  hidden
+                >
+                  <div class="stat-grid">
+                    <div><span>HP</span><strong data-stat="hp">—</strong></div>
+                    <div><span>DS</span><strong data-stat="ds">—</strong></div>
+                    <div><span>AT</span><strong data-stat="at">—</strong></div>
+                    <div><span>DE</span><strong data-stat="de">—</strong></div>
+                    <div><span>CT</span><strong data-stat="ct">—</strong></div>
+                    <div><span>EV</span><strong data-stat="ev">—</strong></div>
+                  </div>
+                  <p class="data-note">
+                    Sem valores oficiais verificados para os atributos de
+                    Digimon Masters Online. Nenhum número foi estimado.
+                  </p>
+                </div>
+
+                <div
+                  id="panel-evolution"
+                  class="digimon-tab-panel"
+                  role="tabpanel"
+                  aria-labelledby="tab-evolution"
+                  data-digimon-panel="evolution"
+                  hidden
+                >
+                  <div class="evolution-path">
+                    <span id="evolution-previous">—</span>
+                    <i aria-hidden="true">→</i>
+                    <strong id="evolution-current">—</strong>
+                    <i aria-hidden="true">→</i>
+                    <span id="evolution-next">—</span>
+                  </div>
+                  <p id="evolution-note" class="data-note">—</p>
+                  <p class="data-note">
+                    Consulte a fonte oficial indicada ao final desta ficha.
+                  </p>
+                </div>
+
+                <div
+                  id="panel-description"
+                  class="digimon-tab-panel"
+                  role="tabpanel"
+                  aria-labelledby="tab-description"
+                  data-digimon-panel="description"
+                  hidden
+                >
+                  <p id="digimon-description" class="digimon-description">—</p>
+                  <p class="data-note">
+                    Tradução do perfil oficial em inglês do Digimon Reference
+                    Book.
+                  </p>
+                </div>
+              </div>
+
+              <p class="digimon-source-line">
+                Fonte:
+                <a
+                  id="digimon-source"
+                  href="https://digimon.net/reference/detail.php?directory_name=koromon"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Digimon Reference Book</a
+                >
+              </p>
+            </div>
+
+            <div id="digimon-empty" class="digimon-empty" hidden>
+              <p id="digimon-empty-pedestal" class="eyebrow">PEDESTAL 02</p>
+              <h3>AGUARDANDO<br />REGISTRO</h3>
+              <p>
+                Este pedestal ainda não possui um modelo e dados verificados.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <p class="room-credit">
+          Dados: Digimon Reference Book · Modelos dos Digimons: provisórios
+          nesta versão experimental
+        </p>
+      </section>
+
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+      <footer class="credits">
+        Modelos 3D:
+        <a
+          href="https://sketchfab.com/3d-models/project-playtime-player-1157fba3cb29443580b8a4d2ee202ea5"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Project Playtime Player</a
+        >
+        por
+        <a
+          href="https://sketchfab.com/AlexCwoh"
+          target="_blank"
+          rel="noopener noreferrer"
+          >AlexCwoh</a
+        >
+        ·
+        <a
+          href="https://creativecommons.org/licenses/by/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >CC BY 4.0</a
+        >
+        · Digimons em versão experimental com modelos provisórios · Dados:
+        <a
+          href="https://digimon.net/reference/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Digimon Reference Book</a
+        >
+      </footer>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
