@@ -1,14 +1,11 @@
-import { loadFBXModel } from './FBXModelLoader.js';
-import { loadOBJModel } from './OBJModelLoader.js';
+import { loadGLB } from './GLBLoader.js';
 
-export function loadDigimonModel(config, onProgress) {
-  if (config.format === 'fbx') {
-    return loadFBXModel(config, onProgress);
+export async function loadDigimonModel(config, onProgress) {
+  if (config.format !== 'glb' || !config.url) {
+    throw new Error(`Formato de modelo não suportado: ${config.format ?? '—'}.`);
   }
 
-  if (config.format === 'obj') {
-    return loadOBJModel(config, onProgress);
-  }
-
-  throw new Error(`Formato de modelo não suportado: ${config.format ?? '—'}.`);
+  const gltf = await loadGLB(config.url, onProgress);
+  gltf.scene.animations = gltf.animations;
+  return gltf.scene;
 }

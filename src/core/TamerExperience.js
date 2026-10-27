@@ -8,7 +8,6 @@ import {
   ROOM,
   TRANSITION,
 } from '../config/tamer.js';
-import { createPlaceholderDigimon } from '../entities/PlaceholderDigimon.js';
 import Tamer from '../entities/Tamer.js';
 import { loadDigimonModel } from '../loaders/DigimonModelLoader.js';
 import WorldAtmosphere from '../scenes/WorldAtmosphere.js';
@@ -156,18 +155,7 @@ export default class TamerExperience {
       return null;
     }
 
-    if (import.meta.env.PROD && modelConfig.publicRelease === false) {
-      const object = createPlaceholderDigimon(pedestal.digimonId);
-      this.room.addDigimonModel(index, object, {
-        height: modelConfig.height,
-        rotationY: modelConfig.rotationY,
-      });
-      return { index, digimon };
-    }
-
-    const fileUrl =
-      modelConfig.format === 'fbx' ? modelConfig.fbxUrl : modelConfig.objUrl;
-    const fileName = fileUrl.slice(fileUrl.lastIndexOf('/') + 1);
+    const fileName = modelConfig.url.slice(modelConfig.url.lastIndexOf('/') + 1);
 
     try {
       const object = await loadDigimonModel(modelConfig);

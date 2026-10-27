@@ -33,48 +33,44 @@ corrida são reproduzidas com `AnimationMixer`.
 
 Incluído na versão pública experimental, com atribuição exibida na interface.
 
-## Modelos provisórios dos Digimons
-
-Os modelos de Koromon, Tsunomon e Tsumemon usados na versão pública experimental
-são geometrias provisórias criadas para este projeto. Elas não derivam dos
-arquivos locais e são exibidas com animação de respiração e balanço.
-
 ## Koromon
 
 - Modelo: Koromon
-- Arquivos locais: `public/models/babys/Koromon/Koromon.obj`,
-  `Koromon.mtl` e `Koromon.png`
-- Autoria e licença: não informadas nos arquivos fornecidos ao projeto.
-- Distribuição pública: não autorizada.
-
-Os arquivos permanecem apenas no ambiente local, são usados no modo de
-desenvolvimento e não são incluídos no repositório público nem no pacote de
-produção.
+- Autor: angiestrozzi
+- Perfil do autor: https://sketchfab.com/angiestrozzi
+- Fonte: https://sketchfab.com/3d-models/koromon-f98280c2e9c8444f9c155201e56ff31c
+- Licença: CC Attribution 4.0 (CC BY 4.0)
+- Licença completa: https://creativecommons.org/licenses/by/4.0/
+- Arquivo local: `public/models/babys/Koromon/koromon.glb`
 
 ## Tsunomon
 
-- Modelo: Tsunomon
-- Arquivos locais: `public/models/babys/Tsunomon/Tsunomon.obj`,
-  `Tsunomon.mtl` e `Tsunomon.png`
-- Autoria e licença: não informadas nos arquivos fornecidos ao projeto.
-- Distribuição pública: não autorizada.
-
-Os arquivos permanecem apenas no ambiente local, são usados no modo de
-desenvolvimento e não são incluídos no repositório público nem no pacote de
-produção.
+- Modelo: Tsunomon - Gabumon Line
+- Autor: medothegeek
+- Perfil do autor: https://sketchfab.com/medothegeek
+- Fonte: https://sketchfab.com/3d-models/tsunomon-gabumon-line-digimon-017cd0d26551416b9cb3d03ba067fcdc
+- Licença: CC Attribution 4.0 (CC BY 4.0)
+- Licença completa: https://creativecommons.org/licenses/by/4.0/
+- Arquivo local:
+  `public/models/babys/Tsunomon/tsunomon_-_gabumon_line_-_digimon.glb`
 
 ## Tsumemon
 
 - Modelo: Tsumemon
-- Arquivos locais: `public/models/babys/Tsumemon/chr631.fbx`,
-  `chr631a01.png`, `chr631a01s.png`, `chr631a01s_a.png` e `chr631b01.png`
-- Autoria e licença: não informadas nos arquivos fornecidos ao projeto.
-- Origem identificada: asset de *Digimon Links* no The Models Resource.
-- Distribuição pública: não autorizada.
+- Autor: LorisC93
+- Perfil do autor: https://sketchfab.com/LorisC93
+- Fonte: https://sketchfab.com/3d-models/tsumemon-77da405d021c4328bce61d60c118ccfc
+- Licença: CC Attribution 4.0 (CC BY 4.0)
+- Licença completa: https://creativecommons.org/licenses/by/4.0/
+- Arquivo local: `public/models/babys/Tsumemon/tsumemon.glb`
 
-Os arquivos permanecem apenas no ambiente local, são usados no modo de
-desenvolvimento e não são incluídos no repositório público nem no pacote de
-produção.
+Os modelos dos Digimons foram escalados e posicionados dentro do jogo. Nenhuma
+alteração foi feita nos arquivos originais. Koromon usa animação de respiração e
+balanço; Tsunomon e Tsumemon reproduzem suas animações de idle com
+`AnimationMixer`.
+
+Todos os modelos estão incluídos na versão pública com atribuição exibida na
+interface.
 
 ## Dados do Digimon
 

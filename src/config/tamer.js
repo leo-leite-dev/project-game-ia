@@ -85,33 +85,24 @@ export const PEDESTALS = Object.freeze([
 
 export const DIGIMON_MODELS = Object.freeze({
   koromon: Object.freeze({
-    format: 'obj',
-    objUrl: '/models/babys/Koromon/Koromon.obj',
-    mtlUrl: '/models/babys/Koromon/Koromon.mtl',
+    format: 'glb',
+    url: '/models/babys/Koromon/koromon.glb',
     height: 1.12,
-    rotationY: Math.PI,
-    publicRelease: false,
+    rotationY: Math.PI / 2,
   }),
   tsunomon: Object.freeze({
-    format: 'obj',
-    objUrl: '/models/babys/Tsunomon/Tsunomon.obj',
-    mtlUrl: '/models/babys/Tsunomon/Tsunomon.mtl',
+    format: 'glb',
+    url: '/models/babys/Tsunomon/tsunomon_-_gabumon_line_-_digimon.glb',
     height: 1.18,
     rotationY: Math.PI,
-    publicRelease: false,
+    idleClipName: 'idle',
   }),
   tsumemon: Object.freeze({
-    format: 'fbx',
-    fbxUrl: '/models/babys/Tsumemon/chr631.fbx',
+    format: 'glb',
+    url: '/models/babys/Tsumemon/tsumemon.glb',
     height: 0.95,
     rotationY: Math.PI,
     idleClipName: 'chr631_br01',
-    publicRelease: false,
-    textures: Object.freeze({
-      chr631_mat_000: '/models/babys/Tsumemon/chr631a01.png',
-      chr631_mat_001: '/models/babys/Tsumemon/chr631a01.png',
-      chr631_mat_002: '/models/babys/Tsumemon/chr631a01s.png',
-    }),
   }),
 });
 
