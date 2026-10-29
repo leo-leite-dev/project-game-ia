@@ -1,4 +1,4 @@
-# Autenticação do Game Com IA
+# Autenticação do ReGenesis Arcade
 
 ## Estado desta entrega
 

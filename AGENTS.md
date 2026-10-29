@@ -129,7 +129,7 @@ Após implementar alterações:
 ## Infraestrutura e hospedagem
 
 - Hospedagem oficial: **Cloudflare Pages**.
-- Repositório: https://github.com/leo-leite-dev/project-game-ia
+- Repositório: https://github.com/leo-leite-dev/project-regenesis-arcarde
 - Site publicado: https://project-game-ia.pages.dev
 - Branch de produção: `main`.
 - O Cloudflare Pages está conectado ao repositório GitHub e publica automaticamente a cada envio de alterações para `main`.

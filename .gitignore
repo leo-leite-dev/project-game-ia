@@ -35,3 +35,6 @@ desktop.ini
 .idea/
 .vscode/
 *.swp
+
+# Capturas de tela (locais, nao versionadas sem autorizacao)
+screenshots/
