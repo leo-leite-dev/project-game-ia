@@ -3,6 +3,7 @@ import { captureAuthReturn } from './auth/authReturn.ts';
 import { createAuthMetadata } from './auth/authMetadata.ts';
 import { createGameAuthClient } from './auth/supabaseClient.ts';
 import { createAuthService } from './auth/authService.ts';
+import { createCatalogService } from './games/catalogService.ts';
 import AuthController from './auth/AuthController.ts';
 import AuthView from './ui/AuthView.ts';
 import authTemplate from './ui/authScreen.html?raw';
@@ -10,7 +11,7 @@ import { AudioController } from './audio/AudioController.ts';
 import type { AuthMode } from './types/auth.ts';
 import type { AuthConfig } from './auth/authConfig.ts';
 import type { StorageLike } from './types/domain.ts';
-import './styles/auth.css';
+import './styles/main.scss';
 
 const authReturn = captureAuthReturn(window.location.href, (path) => history.replaceState(null, '', path));
 let config: AuthConfig | null = null;
@@ -48,6 +49,8 @@ const audioToggle = document.getElementById('auth-audio-toggle') as HTMLButtonEl
 const audioVolume = document.getElementById('auth-audio-volume') as HTMLInputElement | null;
 
 function syncAudioControls(): void {
+  const radioStatus = document.getElementById('dashboard-audio-status');
+  if (radioStatus) radioStatus.textContent = audio.isMusicPlaying ? 'TOCANDO' : 'PAUSADO';
   if (audioToggle) {
     const playing = audio.isMusicPlaying;
     audioToggle.setAttribute('aria-pressed', String(playing));
@@ -111,15 +114,17 @@ if (!config) {
     };
   }
   const metadata = createAuthMetadata(metadataStorage, activeConfig.storageKey);
+  const authClient = createGameAuthClient(activeConfig);
   const service = createAuthService({
-    client: createGameAuthClient(activeConfig),
+    client: authClient,
     metadata,
     origin: window.location.origin,
     projectUrl: activeConfig.url,
     withCallbackLock: (operation) =>
       navigator.locks ? navigator.locks.request(`${activeConfig.storageKey}:callback`, operation) : operation(),
   });
-  const controller = new AuthController({ service, view });
+  const catalog = createCatalogService(authClient.supabase);
+  const controller = new AuthController({ service, view, catalog });
   view.bind({
     submit: (values) => controller.submit(values),
     navigate: (mode) => controller.navigate(mode),
@@ -127,6 +132,13 @@ if (!config) {
     back: () => (controller.state.mode === 'callback-error' ? controller.refresh() : controller.navigate('signin')),
     logout: () => controller.logout(),
     retrySession: () => controller.refresh(),
+    saveGame: (values, editingId) => (editingId ? controller.updateGame(editingId, values) : controller.publishGame(values)),
+    deleteGame: (id) => {
+      const game = controller.state.adminGames.find((entry) => entry.id === id);
+      if (game) return controller.deleteGame(game);
+      return Promise.resolve();
+    },
+    toggleAvailable: (game) => controller.toggleGameAvailability(game),
   });
   void controller.start(authReturn);
   const refresh = () => {

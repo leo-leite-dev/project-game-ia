@@ -7,6 +7,7 @@ import {
 } from './authErrors.ts';
 import type { AuthService } from './authService.ts';
 import type { AuthReturn } from './authReturn.ts';
+import type { CatalogService, GameEntry, GameFormValues } from '../types/domain.ts';
 import type {
   AuthFieldError,
   AuthFormValues,
@@ -26,6 +27,7 @@ interface AuthViewLike {
 export interface AuthControllerOptions {
   service: AuthService;
   view: AuthViewLike;
+  catalog?: CatalogService;
   navigateExternal?: (url: string) => void;
   now?: () => number;
 }
@@ -37,6 +39,7 @@ const ACTIONABLE_EVENTS = ['SIGNED_IN', 'TOKEN_REFRESHED', 'USER_UPDATED', 'PASS
 export default class AuthController {
   private readonly service: AuthService;
   private readonly view: AuthViewLike;
+  private readonly catalog: CatalogService | null;
   private readonly navigateExternal: (url: string) => void;
   private readonly now: () => number;
   private epoch = 0;
@@ -51,11 +54,16 @@ export default class AuthController {
     user: null,
     message: 'Verificando sua sessão...',
     tone: 'info',
+    games: [],
+    adminGames: [],
+    catalogMessage: '',
+    catalogBusy: false,
   };
 
-  constructor({ service, view, navigateExternal = (url) => globalThis.location.assign(url), now = Date.now }: AuthControllerOptions) {
+  constructor({ service, view, catalog, navigateExternal = (url) => globalThis.location.assign(url), now = Date.now }: AuthControllerOptions) {
     this.service = service;
     this.view = view;
+    this.catalog = catalog ?? null;
     this.navigateExternal = navigateExternal;
     this.now = now;
   }
@@ -69,6 +77,9 @@ export default class AuthController {
     if (this.expiryTimer !== null) clearTimeout(this.expiryTimer);
     this.view.clearIdentity();
     this.state.user = null;
+    this.state.games = [];
+    this.state.adminGames = [];
+    this.state.catalogMessage = '';
   }
 
   signedOut(message = ''): void {
@@ -87,6 +98,7 @@ export default class AuthController {
     if (!sameOwner || recovery) this.dropIdentity();
     const mode: AuthMode = recovery ? 'new-password' : 'authenticated';
     this.render({ user: session.user, mode, busy: false, message: '', tone: 'info' });
+    if (mode === 'authenticated') void this.loadCatalog();
     if (this.expiryTimer !== null) clearTimeout(this.expiryTimer);
     const expiresAt = session.expiresAt;
     if (expiresAt) {
@@ -242,6 +254,105 @@ export default class AuthController {
     } finally {
       this.signingOut = false;
     }
+  }
+
+  async loadCatalog(): Promise<void> {
+    const user = this.state.user;
+    if (!this.catalog || !user || this.state.mode !== 'authenticated' || this.destroyed) return;
+    const epoch = this.epoch;
+    try {
+      let games: GameEntry[];
+      let adminGames = this.state.adminGames;
+      if (user.role === 'admin') {
+        adminGames = await this.catalog.listFor('admin');
+        games = adminGames.filter((game) => game.available);
+      } else {
+        games = await this.catalog.listFor('member');
+      }
+      if (this.destroyed || epoch !== this.epoch) return;
+      this.render({ games, adminGames, catalogMessage: '' });
+    } catch {
+      if (this.destroyed || epoch !== this.epoch) return;
+      this.render({ catalogMessage: 'Não foi possível carregar o catálogo. Verifique a conexão e tente novamente.' });
+    }
+  }
+
+  private async runCatalogAction(operation: () => Promise<unknown>, successMessage: string): Promise<void> {
+    const catalog = this.catalog;
+    const user = this.state.user;
+    if (!catalog || !user || user.role !== 'admin' || this.state.catalogBusy) return;
+    this.render({ catalogBusy: true, catalogMessage: '' });
+    try {
+      await operation();
+      const adminGames = await catalog.listFor('admin');
+      if (this.destroyed) return;
+      this.render({
+        games: adminGames.filter((game) => game.available),
+        adminGames,
+        catalogBusy: false,
+        catalogMessage: successMessage,
+      });
+    } catch (error) {
+      if (this.destroyed) return;
+      this.render({
+        catalogBusy: false,
+        catalogMessage: error instanceof Error ? error.message : 'Falha no catálogo. Tente novamente.',
+      });
+      throw error;
+    }
+  }
+
+  publishGame(values: GameFormValues): Promise<void> {
+    return this.runCatalogAction(
+      () => {
+        if (!this.catalog) throw new Error('Catálogo indisponível.');
+        return this.catalog.create({
+          slug: values.slug,
+          title: values.title,
+          description: values.description,
+          entry: values.entry,
+          available: values.available,
+          sortOrder: 0,
+        });
+      },
+      'Jogo salvo no catálogo.',
+    );
+  }
+
+  updateGame(id: string, values: GameFormValues): Promise<void> {
+    return this.runCatalogAction(
+      () => {
+        if (!this.catalog) throw new Error('Catálogo indisponível.');
+        return this.catalog.update(id, {
+          slug: values.slug,
+          title: values.title,
+          description: values.description,
+          entry: values.entry,
+          available: values.available,
+        });
+      },
+      'Alterações salvas.',
+    );
+  }
+
+  toggleGameAvailability(game: GameEntry): Promise<void> {
+    return this.runCatalogAction(
+      () => {
+        if (!this.catalog) throw new Error('Catálogo indisponível.');
+        return this.catalog.update(game.id, { available: !game.available });
+      },
+      game.available ? `"${game.title}" saiu do catálogo público.` : `"${game.title}" está publicado.`,
+    );
+  }
+
+  deleteGame(game: GameEntry): Promise<void> {
+    return this.runCatalogAction(
+      () => {
+        if (!this.catalog) throw new Error('Catálogo indisponível.');
+        return this.catalog.remove(game.id);
+      },
+      `"${game.title}" foi excluído do catálogo.`,
+    );
   }
 
   destroy(): void {

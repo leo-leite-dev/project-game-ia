@@ -281,3 +281,17 @@ NÃ£o Ã© declaraÃ§Ã£o de que cadastro, Google ou e-mail jÃ¡ foram testados no pro
 NÃ£o hÃ¡ cÃ³digo de jogo 3D neste projeto: o `game-ia` Ã© a plataforma web de acesso e
 catÃ¡logo de jogos. O progresso por conta serÃ¡ integrado quando os jogos e a
 persistÃªncia remota forem adicionados.
+
+## Papéis: admin (dono) e member (usuário comum)
+
+- **admin**: única conta que publica, edita, despublica e exclui jogos no catálogo (painel visível na hub pós-login).
+- **member**: usuário comum — vê apenas jogos publicados, joga e tem o progresso salvo por conta.
+- O papel vem de `app_metadata.role = "admin"` no Supabase. `app_metadata` **não é editável pelo usuário** (só via painel, service role ou SQL); valores inesperados caem sempre em `member`.
+
+### Definir sua conta como admin (uma vez)
+
+1. Crie o projeto Supabase e configure `.env.local`.
+2. Rode a migração `supabase/migrations/20261029130000_catalog_games.sql` no SQL Editor (cria a tabela `games` com RLS: leitura pública, escrita só admin).
+3. Rode também o comando de bootstrap indicado no final da migração (troque o e-mail pelo seu). Depois, em **Authentication ? Users**, sua conta deve mostrar `app_metadata.role: "admin"`.
+
+Sem esse passo, nenhuma conta tem acesso de escrita — o painel admin não aparece e o RLS bloqueia mutations.

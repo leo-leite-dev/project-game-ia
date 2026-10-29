@@ -5,7 +5,7 @@
     <div class="digital-orbit" aria-hidden="true"><div class="orbit-ring"></div><div class="orbit-core"><span>デジタル</span><b>D</b><small>WORLD LINK</small></div><i></i><i></i></div>
     <p class="auth-eyebrow">// PORTAL DE JOGOS</p>
     <h1 id="brand-title">Uma nova conexão.<br /><em>Sua coleção de jogos.</em></h1>
-    <p class="auth-intro-copy">Conecte sua conta e acesse os jogos que você publicar nesta plataforma. Seu progresso em cada um fica salvo na sua conta.</p>
+    <p class="auth-intro-copy">Entre na ReGenesis Arcade, descubra os jogos publicados e jogue no seu ritmo. Seu progresso acompanha a sua conta.</p>
     <div class="auth-feature-strip"><span>IDENTIDADE SEGURA</span><span>SEUS JOGOS</span><span>PROGRESSO NA CONTA</span></div>
   </section>
 
@@ -39,14 +39,6 @@
         <div id="auth-google-section"><div class="auth-divider"><span>OU CONECTE COM</span></div><button id="auth-google" class="auth-google" type="button"><span class="google-mark" aria-hidden="true">G</span> Entrar com Google</button><p class="auth-google-note">Google em fase de testes: use uma conta autorizada.</p></div>
       </div>
 
-      <div id="auth-entry" class="auth-entry" hidden>
-        <div class="auth-account"><span class="auth-account-icon" aria-hidden="true">✓</span><div><span>CONTA AUTENTICADA</span><strong id="auth-user-email"></strong></div></div>
-        <p>Sua identidade foi verificada pelo Supabase Auth.</p>
-        <div id="auth-progress-note" class="auth-progress-note"><strong>Seus jogos, em breve.</strong><p>Os jogos que você publicar nesta plataforma aparecerão aqui. O progresso de cada jogo ficará associado a esta conta.</p></div>
-        <ul id="auth-games-list" class="auth-games-list" aria-label="Jogos disponíveis"></ul>
-        <p id="auth-games-empty" class="auth-games-empty">Nenhum jogo disponível no momento.</p>
-        <button id="auth-logout" class="auth-secondary" type="button">Sair da conta</button>
-      </div>
       <button id="auth-back" class="auth-back auth-text-button" type="button" hidden>← Voltar para entrar</button>
       <button id="auth-cancel-recovery" class="auth-back auth-text-button" type="button" hidden>Cancelar recuperação e sair</button>
       <button id="auth-retry-logout" class="auth-secondary" type="button" hidden>Tentar sair novamente</button>
@@ -56,10 +48,78 @@
   </section>
   <footer class="auth-footer">
     <span>REGENESIS ARCADE</span>
-    <div class="auth-audio-controls" role="group" aria-label="Controles de áudio">
-      <button id="auth-audio-toggle" class="auth-audio-button" type="button" aria-pressed="false" aria-label="Ligar música">♪</button>
-      <label class="auth-audio-volume" for="auth-audio-volume"><span aria-hidden="true">VOL</span><input id="auth-audio-volume" type="range" min="0" max="100" step="5" value="70" aria-label="Volume da música" /></label>
+    <div id="auth-footer-audio-slot">
+      <div class="auth-audio-controls" role="group" aria-label="Controles de áudio">
+        <button id="auth-audio-toggle" class="auth-audio-button" type="button" aria-pressed="false" aria-label="Ligar música">♪</button>
+        <label class="auth-audio-volume" for="auth-audio-volume"><span aria-hidden="true">VOL</span><input id="auth-audio-volume" type="range" min="0" max="100" step="5" value="70" aria-label="Volume da música" /></label>
+      </div>
     </div>
     <span>SEU ARCADE RETRO ONLINE</span>
   </footer>
 </main>
+
+<section id="auth-entry" class="dashboard" aria-label="Dashboard ReGenesis Arcade" hidden>
+  <div class="dashboard-frame">
+    <header class="dashboard-topbar">
+      <button id="dashboard-menu-toggle" class="dashboard-menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="dashboard-sidebar">☰</button>
+      <a class="dashboard-brand" href="#dashboard-home" aria-label="ReGenesis Arcade, início"><span class="dashboard-brand-mark" aria-hidden="true">R<span>▣</span></span><span>REGENESIS <b>ARCADE</b></span></a>
+      <label class="dashboard-search" for="dashboard-search"><span aria-hidden="true">⌕</span><input id="dashboard-search" type="search" placeholder="Buscar jogos publicados..." autocomplete="off" /></label>
+      <div class="dashboard-radio"><span class="dashboard-cassette" aria-hidden="true">▣</span><span class="dashboard-radio-name"><small>NOW PLAYING</small><strong>ReGenesis Radio</strong><small id="dashboard-audio-status">PAUSADO</small></span><div id="dashboard-audio-slot"></div></div>
+      <a class="dashboard-top-profile" href="#dashboard-profile" aria-label="Ir ao perfil"><span id="dashboard-top-avatar" aria-hidden="true">R</span><span>MINHA CONTA</span><span aria-hidden="true">⌄</span></a>
+    </header>
+
+    <div class="dashboard-layout">
+      <nav id="dashboard-sidebar" class="dashboard-sidebar" aria-label="Navegação da ReGenesis Arcade">
+        <a class="dashboard-nav-item is-active" href="#dashboard-home"><span aria-hidden="true">⌂</span>Início</a>
+        <button class="dashboard-nav-item" type="button" disabled><span aria-hidden="true">▣</span>Minha Biblioteca<small>Em breve</small></button>
+        <button class="dashboard-nav-item" type="button" disabled><span aria-hidden="true">♜</span>Conquistas<small>Em breve</small></button>
+        <a class="dashboard-nav-item" href="#dashboard-profile"><span aria-hidden="true">♙</span>Meu Perfil</a>
+        <button class="dashboard-nav-item" type="button" disabled><span aria-hidden="true">♧</span>Amigos<small>Em breve</small></button>
+        <button class="dashboard-nav-item" type="button" disabled><span aria-hidden="true">♡</span>Lista de Desejos<small>Em breve</small></button>
+        <button class="dashboard-nav-item" type="button" disabled><span aria-hidden="true">▤</span>Notícias<small>Em breve</small></button>
+        <button class="dashboard-nav-item" type="button" disabled><span aria-hidden="true">⚙</span>Configurações<small>Em breve</small></button>
+        <div id="dashboard-admin-nav" class="dashboard-admin-nav" hidden>
+          <a class="dashboard-nav-item" href="#auth-admin"><span aria-hidden="true">⇧</span>Publicar jogo</a>
+          <a class="dashboard-nav-item" href="#auth-admin"><span aria-hidden="true">♢</span>Painel Admin</a>
+        </div>
+        <p class="dashboard-sidebar-quote">BONS<br />JOGOS<br />SEMPRE<br />ENCONTRAM<br />VOCÊ AQUI.</p>
+      </nav>
+
+      <main id="dashboard-home" class="dashboard-content">
+        <section class="dashboard-hero" aria-labelledby="dashboard-feature-title">
+          <div class="dashboard-hero-art" aria-hidden="true"><span class="dashboard-sun"></span><span class="dashboard-skyline"></span><span class="dashboard-road"></span><span class="dashboard-car"></span></div>
+          <div class="dashboard-hero-copy"><span id="dashboard-feature-tag" class="dashboard-neon-tag">SEU ARCADE</span><h1 id="dashboard-feature-title">SEU ARCADE COMEÇA AQUI</h1><p class="dashboard-hero-kicker">JOGUE. DESCUBRA. RECOMECE.</p><p id="dashboard-feature-description">Histórias e desafios com espírito de locadora, cores neon e uma coleção feita para você.</p><a id="dashboard-feature-play" class="dashboard-hero-play" href="#dashboard-games" hidden>▶ Jogar agora</a><span id="dashboard-feature-pending" class="dashboard-hero-pending">NOVOS JOGOS EM BREVE</span></div>
+          <span class="dashboard-hero-counter" aria-hidden="true">● ○ ○</span>
+        </section>
+
+        <section class="dashboard-section" aria-labelledby="dashboard-continue-title"><div class="dashboard-section-heading"><h2 id="dashboard-continue-title"><span aria-hidden="true">✦</span> Continuar jogando</h2><span class="dashboard-coming-label">EM BREVE</span></div><div class="dashboard-progress-placeholder"><span class="dashboard-placeholder-icon" aria-hidden="true">▣</span><div><strong>Suas partidas, em um só lugar.</strong><p>O histórico de jogos e a retomada rápida chegarão em breve. Seu progresso continua associado à sua conta.</p></div></div></section>
+
+        <section id="dashboard-games" class="dashboard-section" aria-labelledby="dashboard-games-title"><div class="dashboard-section-heading"><h2 id="dashboard-games-title"><span aria-hidden="true">✦</span> Adicionados recentemente</h2><span class="dashboard-neon-tag dashboard-neon-tag--small">NOVO</span></div><div id="auth-progress-note" class="auth-progress-note"><strong id="auth-progress-title">Sua coleção está esquentando.</strong><p id="auth-progress-copy">Nenhum jogo no ar ainda. Do arcade 8-bit ao neon infinito: escolha um jogo publicado e seu progresso fica salvo na sua conta.</p></div><ul id="auth-games-list" class="auth-games-list" aria-label="Jogos disponíveis"></ul><div id="dashboard-empty-shelf" class="dashboard-empty-shelf" aria-hidden="true"><div><span>EM BREVE</span></div><div><span>EM BREVE</span></div><div><span>EM BREVE</span></div><div><span>EM BREVE</span></div><div><span>EM BREVE</span></div><div><span>EM BREVE</span></div></div><p id="auth-games-empty" class="auth-games-empty">Nenhum jogo no ar agora — o arcade aquece por aqui.</p></section>
+
+        <section class="dashboard-section dashboard-section--upcoming" aria-labelledby="dashboard-upcoming-title"><div class="dashboard-section-heading"><h2 id="dashboard-upcoming-title"><span aria-hidden="true">▦</span> Em breve</h2><span class="dashboard-coming-label">PRÓXIMAS SESSÕES</span></div><div class="dashboard-upcoming-grid"><div class="dashboard-upcoming-tile"><span>EM BREVE</span><i aria-hidden="true">✧</i></div><div class="dashboard-upcoming-tile"><span>EM BREVE</span><i aria-hidden="true">◇</i></div><div class="dashboard-upcoming-tile"><span>EM BREVE</span><i aria-hidden="true">✦</i></div><div class="dashboard-upcoming-tile"><span>EM BREVE</span><i aria-hidden="true">▣</i></div></div></section>
+
+        <div id="dashboard-admin-slot"><section id="auth-admin" class="auth-admin" hidden aria-labelledby="auth-admin-title">
+          <h3 id="auth-admin-title">PAINEL ADMIN — CATÁLOGO</h3>
+          <p id="auth-admin-message" class="auth-admin-message" role="status" hidden></p>
+          <form id="auth-admin-form" class="auth-admin-form" novalidate>
+            <div class="auth-field"><label for="game-slug">SLUG</label><input id="game-slug" name="slug" type="text" maxlength="60" placeholder="meu-jogo" required /></div>
+            <div class="auth-field"><label for="game-title">TÍTULO</label><input id="game-title" name="title" type="text" maxlength="80" placeholder="Meu Jogo" required /></div>
+            <div class="auth-field"><label for="game-description">RESUMO</label><input id="game-description" name="description" type="text" maxlength="280" placeholder="Resumo curto exibido no catálogo" /></div>
+            <div class="auth-field"><label for="game-entry">ENTRADA (CAMINHO OU URL)</label><input id="game-entry" name="entry" type="text" maxlength="300" placeholder="/jogos/meu-jogo/" /></div>
+            <label class="auth-admin-available" for="game-available"><input id="game-available" type="checkbox" /> Publicar imediatamente</label>
+            <div class="auth-admin-actions"><button id="auth-admin-submit" class="auth-primary" type="submit"><span>PUBLICAR JOGO</span><span aria-hidden="true">→</span></button><button id="auth-admin-cancel" class="auth-text-button" type="button" hidden>Cancelar edição</button></div>
+          </form>
+          <ul id="auth-admin-list" class="auth-admin-list" aria-label="Jogos no catálogo"></ul>
+        </section></div>
+      </main>
+
+      <aside class="dashboard-aside" aria-label="Conta e recursos da comunidade">
+        <section id="dashboard-profile" class="dashboard-panel dashboard-profile"><div class="dashboard-identity"><span id="dashboard-avatar" class="dashboard-avatar" aria-hidden="true">R</span><div><strong id="auth-user-email"></strong><span id="auth-role-badge" class="auth-role-badge" hidden></span></div></div><p>Conta conectada via Supabase Auth.</p><div class="dashboard-profile-strip"><span>PROGRESSO<small>Em breve</small></span><span>CONQUISTAS<small>Em breve</small></span></div></section>
+        <section class="dashboard-panel dashboard-activity"><div class="dashboard-panel-heading"><h2>ATIVIDADE RECENTE</h2><span>Em breve</span></div><p>Suas partidas e conquistas aparecerão aqui quando esse recurso estiver disponível.</p></section>
+        <section class="dashboard-panel dashboard-picks"><div class="dashboard-picks-glow" aria-hidden="true">✦</div><h2>ESCOLHAS DA EQUIPE</h2><strong>Tonight's<br />Picks</strong><p>Uma seleção especial do arcade. Recomendações em breve.</p><span class="dashboard-neon-tag dashboard-neon-tag--small">EM BREVE</span></section>
+        <section class="dashboard-panel dashboard-collection"><div class="dashboard-panel-heading"><h2>COLEÇÃO</h2><span>NO AR</span></div><div class="dashboard-collection-stat"><span aria-hidden="true">▣</span><strong id="dashboard-published-count">0</strong><small>jogos publicados</small></div><p>Biblioteca pessoal e estatísticas: em breve.</p></section>
+        <button id="auth-logout" class="dashboard-logout" type="button">↪ &nbsp; Sair da conta</button>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -103,9 +103,9 @@ Quando o usuário relatar um erro:
 
 Após implementar alterações:
 
-- Executar os testes disponíveis e relevantes.
-- Executar `npm.cmd run typecheck` (quando existir) e corrigir todos os erros de tipo antes de encerrar.
-- Executar `npm.cmd run build` quando aplicável e corrigir erros de compilação.
+- No fluxo diário, executar **apenas os testes das áreas alteradas** (ex.: `node --test tests/auth/authView.test.ts`); nunca a suíte inteira por rotina.
+- A suíte completa (`npm.cmd test`) e o `npm.cmd run build` são obrigatórios **apenas antes de commits, publicações e no encerramento de entregas**.
+- Executar `npm.cmd run typecheck` (quando existir) e corrigir todos os erros de tipo antes de encerrar (global, mas rápido).
 - Verificar erros de carregamento de modelos e texturas quando relacionados à alteração.
 - Testar as interações relevantes quando houver ferramentas disponíveis.
 - Informar claramente o que foi realmente testado e o que ainda depende de testes manuais.

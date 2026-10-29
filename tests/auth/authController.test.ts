@@ -1,19 +1,49 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { fakeAuthClient, fakeSession } from '../helpers/fakeAuth.js';
+import { fakeAuthClient, fakeSession } from '../helpers/fakeAuth.ts';
 import { createAuthService } from '../../src/auth/authService.ts';
 import AuthController from '../../src/auth/AuthController.ts';
+import type { AuthFieldError, AuthViewState } from '../../src/types/auth.ts';
 
-function deferred() {
-  let resolve;
-  let reject;
-  const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+interface TestLike {
+  after(fn: () => void): void;
+}
+
+interface FakeView {
+  error?: AuthFieldError;
+  redirect: string;
+  render(state: AuthViewState): void;
+  clearPasswords(): void;
+  clearIdentity(): void;
+  fieldError(error: AuthFieldError): void;
+}
+
+function deferred<T = unknown>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
   return { promise, resolve, reject };
 }
 
-function setup(t) {
+function createView(): FakeView {
+  const view: FakeView = {
+    redirect: '',
+    render() {},
+    clearPasswords() {},
+    clearIdentity() {},
+    fieldError(error) {
+      view.error = error;
+    },
+  };
+  return view;
+}
+
+function setup(t: TestLike) {
   const fake = fakeAuthClient();
-  const view = { render() {}, clearPasswords() {}, clearIdentity() {}, fieldError(value) { this.error = value; } };
+  const view = createView();
   const service = createAuthService({ ...fake, origin: 'http://localhost:5173', projectUrl: 'https://example.supabase.co' });
   const controller = new AuthController({ service, view, navigateExternal: (url) => { view.redirect = url; } });
   t.after(() => controller.destroy());
@@ -36,7 +66,7 @@ test('cadastro válido fica aguardando confirmação sem criar sessão', async (
 
 test('validação não chama SDK e loading bloqueia submissão duplicada', async (t) => {
   const { controller, calls, responses, view } = setup(t); await controller.start();
-  await controller.submit({ email: 'invalid', password: '' }); assert.equal(view.error.field, 'email');
+  await controller.submit({ email: 'invalid', password: '' }); assert.equal(view.error?.field, 'email');
   const pending = deferred();
   responses.signInWithPassword = () => pending.promise;
   const first = controller.submit({ email: 'a@example.test', password: '12345678' });
@@ -48,14 +78,15 @@ test('validação não chama SDK e loading bloqueia submissão duplicada', async
 
 test('sessão restaurada é validada e entra no estado autenticado', async (t) => {
   const { controller, setSession } = setup(t); setSession(fakeSession()); await controller.start();
-  assert.equal(controller.state.mode, 'authenticated'); assert.equal(controller.state.user.id, 'user-a');
+  assert.equal(controller.state.mode, 'authenticated'); assert.equal(controller.state.user?.id, 'user-a');
 });
 
 test('logout e troca A/B descartam identidade anterior', async (t) => {
   const { controller, setSession } = setup(t); setSession(fakeSession()); await controller.start();
   setSession(fakeSession('user-b')); controller.onAuthEvent('SIGNED_IN', 'user-b');
-  assert.equal(controller.state.user, null);
-  await controller.refresh(); assert.equal(controller.state.user.id, 'user-b');
+  // Comparação solta para não estreitar o tipo de `state.user` via asserts do assert.equal.
+  assert.equal(controller.state.user == null, true);
+  await controller.refresh(); assert.equal(controller.state.user?.id, 'user-b');
   await controller.logout(); assert.equal(controller.state.mode, 'signin'); assert.equal(controller.state.user, null);
 });
 
@@ -77,7 +108,7 @@ test('recuperação tem prioridade sobre sessão restaurada e só libera nova se
 test('callback inválido não entra e erro bruto não aparece', async (t) => {
   const { controller, responses } = setup(t);
   responses.exchangeCodeForSession = () => ({ data: {}, error: { message: 'PASSWORD_TOKEN_PRIVATE', code: 'otp_expired' } });
-  await controller.start({ code: 'FAKE' });
+  await controller.start({ code: 'FAKE', flowId: null, tokenHash: null, type: null, invalid: false });
   assert.equal(controller.state.mode, 'callback-error'); assert.equal(controller.state.user, null);
   assert.match(controller.state.message, /Link inválido/); assert.equal(controller.state.message.includes('PRIVATE'), false);
 });

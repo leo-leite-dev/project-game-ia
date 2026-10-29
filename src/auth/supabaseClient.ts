@@ -69,6 +69,9 @@ export function createGameAuthClient(config: AuthConfig, { fetch: fetcher = glob
   });
   return {
     auth: client.auth,
+    // Cliente completo para dados (PostgREST). O transporte guardado aplica
+    // sessão/abort também às requisições fora de /auth/v1.
+    supabase: client,
     onSessionBoundary(event: string, userId: string | null): void {
       if (event === 'INITIAL_SESSION') {
         sessionOwner = userId;

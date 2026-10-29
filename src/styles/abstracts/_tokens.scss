@@ -1,0 +1,23 @@
+// Identidade compartilhada da ReGenesis Arcade. Variáveis CSS mantidas para
+// futuras opções de tema e valores dinâmicos em tempo de execução.
+$night: #0d0620;
+$panel: #130b2e;
+$panel-soft: #1a1038;
+$pink: #f725ad;
+$cyan: #4adeff;
+$purple: #9b55f9;
+$muted: #b6a7d5;
+$line: #5b347e;
+$space: 12px;
+
+:root {
+  --arcade-night: #{$night};
+  --arcade-panel: #{$panel};
+  --arcade-soft: #{$panel-soft};
+  --arcade-pink: #{$pink};
+  --arcade-cyan: #{$cyan};
+  --arcade-purple: #{$purple};
+  --arcade-muted: #{$muted};
+  --arcade-line: #{$line};
+  --arcade-space: #{$space};
+}

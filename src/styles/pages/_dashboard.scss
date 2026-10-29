@@ -1,0 +1,153 @@
+@use '../abstracts/tokens' as t;
+@use '../abstracts/mixins' as m;
+
+.dashboard-content { min-width: 0; }
+
+.dashboard-hero {
+  position: relative;
+  display: flex;
+  height: 268px;
+  overflow: hidden;
+  align-items: center;
+  border: 1px solid #a627cf;
+  border-radius: 7px;
+  background: radial-gradient(ellipse at 76% 54%, #d42dc050, transparent 50%), linear-gradient(115deg, #140622 16%, #421263 70%, #1a0b53);
+  box-shadow: 0 7px 28px #140720bb, 0 0 14px #c020d655;
+}
+
+.dashboard-hero-copy { position: relative; z-index: 2; width: min(50%, 420px); padding: 18px 26px; }
+.dashboard-neon-tag { display: inline-block; padding: 5px 9px; border: 1px solid t.$pink; border-radius: 5px; background: #430b43; color: #ff87cf; font-size: 9px; font-weight: 800; letter-spacing: .13em; box-shadow: 0 0 15px #f725ad66; }
+.dashboard-neon-tag--small { padding: 4px 11px; border-radius: 16px; font-size: 9px; }
+.dashboard-hero h1 { display: -webkit-box; max-width: 410px; max-height: 138px; margin: 13px 0 9px; overflow: hidden; color: #fcf4ff; font-size: clamp(30px, 3vw, 47px); font-style: italic; font-weight: 900; line-height: .98; letter-spacing: -.055em; text-transform: uppercase; text-shadow: -3px 3px 0 #a92dad, 0 0 28px #ed2ea099; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.dashboard-hero h1:focus { outline: none; }
+.dashboard-hero-kicker { margin: 9px 0; color: t.$cyan; font-size: 11px; font-weight: 900; letter-spacing: .075em; }
+.dashboard-hero #dashboard-feature-description { max-width: 265px; margin: 0 0 12px; color: #efcfe9; font-size: 11px; line-height: 1.45; }
+.dashboard-hero-play, .dashboard-hero-pending { display: inline-block; min-width: 140px; padding: 11px 15px; border: 1px solid #f353c4; border-radius: 5px; background: linear-gradient(100deg, #e51c9d, #ff3db2); color: #180620; font-size: 11px; font-weight: 900; text-align: center; text-decoration: none; box-shadow: 0 0 20px #f725ad99; }
+.dashboard-hero-pending { border-color: #8e5caa; background: #37134cae; color: #ffd2f3; box-shadow: none; }
+.dashboard-hero-counter { position: absolute; right: 22px; bottom: 12px; z-index: 2; color: t.$pink; font-size: 13px; letter-spacing: .3em; }
+
+// Paisagem CSS autoral: substitui a arte de capa fictícia da referência.
+.dashboard-hero-art { position: absolute; inset: 0 0 0 42%; overflow: hidden; background: radial-gradient(circle at 57% 36%, #f27fb5a0, transparent 35%), linear-gradient(175deg, #c02b9a22, #360b68 58%, #0a0b32 73%); }
+.dashboard-sun { position: absolute; top: 7%; left: 45%; width: 174px; height: 174px; border-radius: 50%; background: repeating-linear-gradient(to bottom, #ffb38c 0 14px, #ff9d86 14px 18px, transparent 18px 22px); box-shadow: 0 0 60px #f85ba8; }
+.dashboard-skyline { position: absolute; right: 0; bottom: 27%; left: 0; height: 40%; background: repeating-linear-gradient(90deg, #1b083d 0 16px, #30115f 17px 27px, #11052f 28px 46px, #22074f 47px 60px); clip-path: polygon(0 42%, 8% 42%, 8% 22%, 14% 22%, 14% 55%, 21% 55%, 21% 10%, 28% 10%, 28% 39%, 35% 39%, 35% 28%, 41% 28%, 41% 50%, 48% 50%, 48% 2%, 55% 2%, 55% 33%, 62% 33%, 62% 50%, 71% 50%, 71% 21%, 77% 21%, 77% 40%, 85% 40%, 85% 11%, 91% 11%, 91% 48%, 100% 48%, 100% 100%, 0 100%); box-shadow: 0 0 25px #f725ad; }
+.dashboard-road { position: absolute; inset: 60% -40% -30%; transform: perspective(200px) rotateX(64deg); background: repeating-linear-gradient(90deg, transparent 0 60px, #f725ad99 61px 63px, transparent 64px 125px), repeating-linear-gradient(0deg, transparent 0 17px, #c729d777 18px 20px); box-shadow: 0 0 35px #f725ad55; }
+.dashboard-car { position: absolute; right: 14%; bottom: 12%; width: 230px; height: 55px; border: 2px solid #ec5fd0; border-radius: 54% 48% 9px 10px; background: linear-gradient(160deg, #ff95ec 5%, #7e27da 28%, #1d0954 75%); transform: skewX(-12deg) rotate(-4deg); box-shadow: 0 12px 0 #180631, 0 0 35px #f725adad, inset 0 2px 15px #e992fc9c; }
+.dashboard-car::before { position: absolute; top: -22px; left: 43px; width: 112px; height: 28px; border: 2px solid #e363dc; border-radius: 60% 52% 0 0; background: linear-gradient(#3c1363, #0d103d); content: ''; }
+.dashboard-car::after { position: absolute; right: 22px; bottom: -17px; left: 27px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 13% 45%, #09081e 0 15px, #ed43be 16px 18px, transparent 19px), radial-gradient(circle at 86% 45%, #09081e 0 15px, #ed43be 16px 18px, transparent 19px); content: ''; }
+
+.dashboard-section { margin-top: 20px; padding: 0 8px; }
+.dashboard-section-heading { display: flex; min-height: 28px; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+.dashboard-section-heading h2 { margin: 0; font-size: 16px; font-weight: 800; }
+.dashboard-section-heading h2 span { margin-right: 7px; color: t.$pink; font-size: 23px; vertical-align: middle; }
+.dashboard-coming-label { color: #c89cdf; font-size: 10px; letter-spacing: .05em; }
+.dashboard-progress-placeholder { display: flex; min-height: 108px; align-items: center; gap: 22px; padding: 16px 23px; border: 1px solid #713c9d9c; border-radius: 6px; background: radial-gradient(circle at 90% 60%, #62327455, transparent 50%), linear-gradient(110deg, #1b0d3f, #120b2e); }
+.dashboard-placeholder-icon { display: grid; width: 68px; height: 62px; flex: none; place-items: center; border: 1px solid t.$pink; border-radius: 8px; color: t.$pink; font-size: 42px; box-shadow: 0 0 22px #f725ad55; }
+.dashboard-progress-placeholder strong { font-size: 13px; }
+.dashboard-progress-placeholder p { max-width: 490px; margin: 6px 0 0; color: t.$muted; font-size: 11px; line-height: 1.5; }
+
+.dashboard .auth-progress-note { display: flex; min-height: 46px; align-items: center; gap: 14px; margin: 8px 0; padding: 7px 12px; border: 1px solid #8743a480; border-radius: 6px; background: linear-gradient(105deg, #351251bb, #171030); }
+.dashboard .auth-progress-note strong { flex: none; font-size: 11px; }
+.dashboard .auth-progress-note p { margin: 0; font-size: 9px; }
+.dashboard .auth-games-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.dashboard .auth-game-card { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 0 0 7px; overflow: hidden; border-color: #794ea0; background: #150d30; }
+.dashboard .auth-game-card h3 { margin: 2px 8px 0; font-size: 11px; overflow-wrap: anywhere; }
+.dashboard .auth-game-card p { display: -webkit-box; min-height: 27px; margin: 0 8px; overflow: hidden; color: t.$muted; font-size: 9px; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.dashboard-game-poster { position: relative; display: grid; min-height: 148px; overflow: hidden; place-items: end center; padding: 12px 7px; background: radial-gradient(circle at 70% 25%, #eb5bfcaa, transparent 34%), linear-gradient(140deg, #302782, #25103d 62%, #b72681); }
+.dashboard-game-poster::before { position: absolute; inset: 20px -50px; border: 2px solid #d75bff88; border-radius: 50%; box-shadow: 0 0 33px #f725ad; transform: rotate(-32deg); content: ''; }
+.dashboard-game-poster::after { position: absolute; inset: 55% -10% -25%; transform: perspective(170px) rotateX(62deg); background: repeating-linear-gradient(0deg, transparent 0 12px, #d356ff77 13px 14px), repeating-linear-gradient(90deg, transparent 0 24px, #ff4dcb88 25px 26px); content: ''; }
+.dashboard-game-poster span { position: relative; z-index: 1; color: #fff; font-size: clamp(13px, 1.3vw, 22px); font-style: italic; font-weight: 900; line-height: 1; text-align: center; text-shadow: 2px 2px 0 #000, 0 0 12px t.$pink; text-transform: uppercase; overflow-wrap: anywhere; }
+.dashboard-game-poster--1 { background: radial-gradient(circle at 55% 30%, #79ebfbaa, transparent 32%), linear-gradient(150deg, #135896, #212073 62%, #701db8); }
+.dashboard-game-poster--2 { background: radial-gradient(circle at 45% 25%, #f85989aa, transparent 32%), linear-gradient(150deg, #591240, #26113d 62%, #9d164f); }
+.dashboard-game-poster--3 { background: radial-gradient(circle at 50% 22%, #ffc78baa, transparent 36%), linear-gradient(150deg, #08778c, #174478 62%, #5e38a7); }
+.dashboard .auth-game-play, .dashboard .auth-game-status { align-self: start; margin: auto 8px 0; font-size: 9px; }
+.dashboard .auth-games-empty { display: flex; min-height: 122px; align-items: center; justify-content: center; margin: 0; border: 1px dashed #873d9e; background: radial-gradient(circle at 50% 100%, #a82ca544, transparent 65%), #160a31; font-size: 12px; }
+.dashboard-empty-shelf { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.dashboard-empty-shelf > div { position: relative; display: grid; min-height: 147px; overflow: hidden; place-items: end center; padding: 13px 4px; border: 1px solid #874cae; border-radius: 6px; background: radial-gradient(circle at 58% 30%, #ff48d688, transparent 36%), linear-gradient(155deg, #1a286c, #18092f 58%, #8d1462); }
+.dashboard-empty-shelf > div::before { position: absolute; top: 17%; left: 10%; width: 80%; height: 80%; border: 2px solid #f181ee8c; border-radius: 50%; box-shadow: 0 0 24px #f725ad77; transform: rotate(-32deg); content: ''; }
+.dashboard-empty-shelf > div:nth-child(2) { background: radial-gradient(circle at 55% 25%, #67d9ffaa, transparent 34%), linear-gradient(160deg, #11649a, #251345 65%, #7642a8); }
+.dashboard-empty-shelf > div:nth-child(3) { background: radial-gradient(circle at 62% 20%, #fa678baa, transparent 32%), linear-gradient(160deg, #7a164c, #190926 65%, #340a4f); }
+.dashboard-empty-shelf > div:nth-child(4) { background: radial-gradient(circle at 50% 22%, #fbd584aa, transparent 30%), linear-gradient(155deg, #5e6496, #144659 64%, #45216a); }
+.dashboard-empty-shelf > div:nth-child(5) { background: radial-gradient(circle at 55% 28%, #7f8ffaaa, transparent 35%), linear-gradient(150deg, #292758, #0b0b29 65%, #532578); }
+.dashboard-empty-shelf > div:nth-child(6) { background: radial-gradient(circle at 50% 25%, #d8a5c8aa, transparent 35%), linear-gradient(145deg, #5f3a67, #170d2a 65%, #542568); }
+.dashboard-empty-shelf span { position: relative; z-index: 1; color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .17em; text-align: center; text-shadow: 0 0 12px t.$pink; }
+.dashboard .auth-games-empty { min-height: 34px; margin-top: 8px; padding: 6px; font-size: 10px; }
+
+.dashboard-upcoming-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.dashboard-upcoming-tile { position: relative; display: flex; height: 105px; overflow: hidden; align-items: flex-start; padding: 8px; border: 1px solid #7452b9; border-radius: 6px; background: radial-gradient(circle at 73% 35%, #5ee8ff88, transparent 35%), linear-gradient(130deg, #15396b, #0e0a30 62%, #51227e); }
+.dashboard-upcoming-tile:nth-child(2) { background: radial-gradient(circle at 55% 27%, #dc4a8a66, transparent 39%), linear-gradient(130deg, #261f5d, #170b26 65%, #61153b); }
+.dashboard-upcoming-tile:nth-child(3) { background: linear-gradient(180deg, #db549177 2%, #8145a6 35%, #161036 65%); }
+.dashboard-upcoming-tile:nth-child(4) { background: radial-gradient(circle at 67% 30%, #587bff88, transparent 35%), linear-gradient(130deg, #172c66, #120a28 70%, #88196e); }
+.dashboard-upcoming-tile span { z-index: 1; padding: 3px 7px; border: 1px solid #cdb5ff; border-radius: 3px; background: #15102dbb; color: #fff; font-size: 9px; letter-spacing: .1em; }
+.dashboard-upcoming-tile i { position: absolute; right: 20px; bottom: -20px; color: #f39cf0; font-size: 110px; font-style: normal; opacity: .7; text-shadow: 0 0 28px t.$pink; }
+
+.dashboard .auth-admin { margin: 27px 8px 0; padding: 18px; @include m.panel(#aa3d9b); }
+.dashboard .auth-admin h3 { font-size: 14px; }
+.dashboard .auth-admin-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 16px; }
+.dashboard .auth-admin-available, .dashboard .auth-admin-actions { grid-column: 1 / -1; }
+
+@include m.below(1200px) {
+  .dashboard-topbar { gap: 12px; }
+  .dashboard-brand { min-width: 230px; font-size: 12px; }
+  .dashboard-search { width: min(28vw, 320px); }
+  .dashboard-top-profile { min-width: 60px; }
+  .dashboard-top-profile > span:not(:first-child) { display: none; }
+  .dashboard-layout { grid-template-columns: 70px minmax(0, 1fr) 280px; }
+  .dashboard-sidebar { align-items: center; }
+  .dashboard-sidebar-quote, .dashboard-nav-item small { display: none; }
+  .dashboard-nav-item { justify-content: center; width: 50px; height: 44px; overflow: hidden; padding: 3px; font-size: 0; }
+  .dashboard-nav-item > span { font-size: 24px; }
+}
+
+@include m.below(1020px) {
+  .dashboard-layout { grid-template-columns: 70px minmax(0, 1fr); }
+  .dashboard-aside { grid-column: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .dashboard-radio { min-width: 200px; }
+  .dashboard-radio-name { display: none; }
+  .dashboard .auth-games-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dashboard-empty-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@include m.below(700px) {
+  .dashboard::before, .dashboard::after { display: none; }
+  .dashboard-topbar { display: grid; grid-template-columns: 36px minmax(0, 1fr) 130px; gap: 8px; padding: 10px 14px; }
+  .dashboard-menu-toggle { display: grid; width: 36px; height: 36px; flex: none; place-items: center; border: 1px solid #9a4ca9; border-radius: 5px; background: #27103c; color: t.$pink; font-size: 20px; }
+  .dashboard-brand { min-width: 0; grid-column: 2; grid-row: 1; font-size: 10px; letter-spacing: .05em; white-space: nowrap; }
+  .dashboard-brand-mark { width: 33px; height: 33px; font-size: 22px; }
+  .dashboard-top-profile { min-width: 42px; width: 42px; grid-column: 3; grid-row: 1; justify-self: end; padding-left: 0; border: 0; }
+  #dashboard-top-avatar { width: 34px; height: 34px; font-size: 16px; }
+  .dashboard-search { width: 100%; grid-column: 1 / 3; grid-row: 2; }
+  .dashboard-radio { min-width: 0; width: 100%; grid-column: 3; grid-row: 2; margin-left: 0; }
+  .dashboard-radio .auth-audio-volume input { width: 34px; }
+  .dashboard-layout { display: block; padding: 12px 10px; }
+  .dashboard-sidebar { position: absolute; top: 59px; left: 8px; z-index: 5; display: none; width: 235px; align-items: stretch; padding: 12px; border: 1px solid #ac2b9a; border-radius: 8px; background: #160a2ff5; box-shadow: 0 15px 32px #000a; }
+  .dashboard.is-menu-open .dashboard-sidebar { display: flex; }
+  .dashboard-nav-item { justify-content: flex-start; width: 100%; height: 42px; overflow: visible; padding: 6px 10px; font-size: 12px; }
+  .dashboard-nav-item small { display: block; }
+  .dashboard-aside { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 20px; }
+  .dashboard .auth-games-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dashboard-empty-shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@include m.below(480px) {
+  .dashboard-topbar { gap: 8px; }
+  .dashboard-search input { font-size: 11px; }
+  .dashboard-cassette { width: 27px; font-size: 16px; }
+  .dashboard-hero { min-height: 320px; align-items: flex-end; }
+  .dashboard-hero-copy { width: 100%; padding: 20px 16px; background: linear-gradient(0deg, #170720ee 0%, #17072088 70%, transparent); }
+  .dashboard-hero h1 { max-width: 320px; font-size: 35px; }
+  .dashboard-hero-art { inset: 0; }
+  .dashboard-sun { top: 2%; left: 60%; width: 100px; height: 100px; }
+  .dashboard-car { right: 12%; bottom: 41%; width: 130px; height: 38px; }
+  .dashboard-car::before { width: 67px; height: 19px; top: -17px; left: 28px; }
+  .dashboard-section { padding: 0 2px; }
+  .dashboard .auth-progress-note { display: block; padding: 12px; }
+  .dashboard .auth-progress-note p { margin-top: 6px; font-size: 11px; }
+  .dashboard-section-heading h2 { font-size: 14px; }
+  .dashboard-progress-placeholder { min-height: 110px; gap: 10px; padding: 13px; }
+  .dashboard-placeholder-icon { width: 45px; height: 45px; font-size: 27px; }
+  .dashboard .auth-games-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-empty-shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-upcoming-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-aside { grid-template-columns: 1fr; }
+  .dashboard .auth-admin-form { grid-template-columns: 1fr; }
+}

@@ -1,6 +1,8 @@
 // Contratos de domínio do fluxo de autenticação compartilhados entre
 // AuthController (estado), AuthView (renderização) e authErrors (validação).
 
+import type { GameEntry } from './domain.ts';
+
 export type AuthMode =
   | 'checking'
   | 'signin'
@@ -15,10 +17,17 @@ export type AuthMode =
 
 export type AuthTone = 'info' | 'error' | 'success';
 
+export type UserRole = 'admin' | 'member';
+
 export interface AuthUser {
   id: string;
   email: string;
   provider: string;
+  /**
+   * Papel da conta. Vem de `app_metadata.role` no Supabase — inalterável
+   * pelo próprio usuário (só via painel/service role). Ausência = member.
+   */
+  role: UserRole;
 }
 
 export interface AuthSessionState {
@@ -33,6 +42,14 @@ export interface AuthViewState {
   user: AuthUser | null;
   message: string;
   tone: AuthTone;
+  /** jogos publicados exibidos a qualquer usuário autenticado */
+  games: GameEntry[];
+  /** todos os jogos (inclusive rascunhos) — somente admin */
+  adminGames: GameEntry[];
+  /** feedback do painel admin (catálogo) */
+  catalogMessage: string;
+  /** operação de catálogo em andamento (admin) */
+  catalogBusy: boolean;
 }
 
 export interface AuthFormValues {

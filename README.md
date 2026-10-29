@@ -2,11 +2,13 @@
 
 **ReGenesis Arcade** (pasta local `game-ia`, antes *Game Com IA*) é uma plataforma web de jogos com identidade synthwave anos 80: o usuário cria uma conta, acessa uma hub com o catálogo de jogos publicados e tem o progresso de cada jogo salvo **por conta**.
 
-> Status: autenticação e catálogo prontos; os jogos entram no catálogo aos poucos em `src/games/catalog.ts`. A autenticação remota depende de um projeto Supabase configurado em `.env.local`.
+> Status: autenticação e catálogo prontos; o **dono (admin)** publica jogos pelo painel admin da hub, e os usuários comuns veem/jogam os títulos publicados com o progresso salvo por conta. A autenticação remota depende de um projeto Supabase configurado em `.env.local`.
 
 ## Recursos
 
 - Login, cadastro, recuperação de senha e sessão via **Supabase Auth** (fluxo PKCE), com callback em `/auth/callback`
+- **Papéis admin/member**: só a conta do dono (`app_metadata.role = admin`) gerencia o catálogo; demais contas veem e jogam
+- **Catálogo remoto** (tabela `public.games` com RLS) e painel admin na hub para publicar/editar/despublicar jogos
 - Hub pós-login com catálogo tipado e estado vazio honesto ("nenhum jogo disponível")
 - Contrato de saves por conta (`userId` + `gameId` + versão) sobre `localStorage`, preparado para Supabase + RLS
 - Música *8-bit rock* e efeitos sonoros gerados por **Web Audio** (sem arquivos de mídia), com controles no rodapé

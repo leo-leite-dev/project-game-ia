@@ -3,7 +3,7 @@ import { GameAuthError } from './authErrors.ts';
 import type { AuthMetadata } from './authMetadata.ts';
 import type { AuthReturn } from './authReturn.ts';
 import type { GameAuthClient } from './supabaseClient.ts';
-import type { AuthSessionState } from '../types/auth.ts';
+import type { AuthSessionState, UserRole } from '../types/auth.ts';
 
 const enumSafeCodes = new Set([
   'user_already_exists',
@@ -21,6 +21,16 @@ const assertResult = <R extends AuthResultLike>(result: R): R['data'] => {
   if (result.error) throw result.error;
   return result.data;
 };
+
+// Papel vem de app_metadata (somente o painel/service role altera). Qualquer
+// valor inesperado é tratado como conta comum — nunca promovemos por acaso.
+function readRole(appMetadata: unknown): UserRole {
+  if (appMetadata !== null && typeof appMetadata === 'object') {
+    const role = (appMetadata as Record<string, unknown>).role;
+    if (role === 'admin') return 'admin';
+  }
+  return 'member';
+}
 
 // `redirectType` existe na resposta do PKCE em runtime, mas não está declarado
 // nas tipagens do SDK; lido com validação para não confiar em formato externo.
@@ -78,6 +88,7 @@ export function createAuthService({
         id: user.id,
         email: user.email ?? '',
         provider: user.app_metadata?.provider ?? '',
+        role: readRole(user.app_metadata),
       },
       expiresAt: latest.expires_at,
     };

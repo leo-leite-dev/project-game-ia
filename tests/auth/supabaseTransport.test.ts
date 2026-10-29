@@ -4,10 +4,13 @@ import { randomUUID } from 'node:crypto';
 import { createGameAuthClient } from '../../src/auth/supabaseClient.ts';
 import { decodeJwtPayload } from '../../src/auth/authConfig.ts';
 
-function deferred() {
-  let resolve;
-  let reject;
-  const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+function deferred<T = unknown>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
   return { promise, resolve, reject };
 }
 
@@ -15,14 +18,15 @@ function deferred() {
 test('SDK real usa updateUser e transporte impede troca A/B no instante da mutação', async (t) => {
   const ownerA = '00000000-0000-0000-0000-000000000001';
   const ownerB = '00000000-0000-0000-0000-000000000002';
-  const calls = [];
-  const token = (sub) => `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({ sub, exp: Math.floor(Date.now() / 1000) + 3600, role: 'authenticated' })).toString('base64url')}.${Buffer.from('SIMULATED_SIGNATURE').toString('base64url')}`;
-  const response = (data) => new Response(JSON.stringify(data), { status: 200, headers: { 'content-type': 'application/json' } });
+  const calls: Array<{ path: string; method: string }> = [];
+  const token = (sub: string): string => `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({ sub, exp: Math.floor(Date.now() / 1000) + 3600, role: 'authenticated' })).toString('base64url')}.${Buffer.from('SIMULATED_SIGNATURE').toString('base64url')}`;
+  const response = (data: unknown): Response => new Response(JSON.stringify(data), { status: 200, headers: { 'content-type': 'application/json' } });
   const client = createGameAuthClient({ url: 'https://transport-test.supabase.co', key: 'sb_publishable_TEST_ONLY', storageKey: `game-ia:test:${randomUUID()}` }, {
-    fetch: async (request) => {
+    fetch: async (input, init) => {
+      const request = input instanceof Request ? input : new Request(input, init);
       const url = new URL(request.url); calls.push({ path: url.pathname, method: request.method });
       if (url.pathname.endsWith('/token')) return response({ access_token: token(ownerA), refresh_token: 'TEST_ONLY', expires_in: 3600, token_type: 'bearer', user: { id: ownerA, email: 'a@example.test' } });
-      if (url.pathname.endsWith('/user')) return response({ id: decodeJwtPayload(request.headers.get('authorization').slice(7)).sub, email: 'a@example.test' });
+      if (url.pathname.endsWith('/user')) return response({ id: decodeJwtPayload(request.headers.get('authorization')?.slice(7) ?? '')?.sub, email: 'a@example.test' });
       return response({});
     },
   });
@@ -30,21 +34,22 @@ test('SDK real usa updateUser e transporte impede troca A/B no instante da muta�
   const signed = await client.auth.signInWithPassword({ email: 'a@example.test', password: 'TEST_ONLY' });
   assert.equal(signed.error, null);
   const updated = await client.updatePassword(ownerA, 'NEW_TEST_ONLY');
-  assert.equal(updated.error, null); assert.equal(updated.data.user.id, ownerA);
+  assert.equal(updated.error, null); assert.equal(updated.data.user?.id, ownerA);
   const mutations = calls.filter((call) => call.method === 'PUT').length;
   const switched = await client.auth.setSession({ access_token: token(ownerB), refresh_token: 'TEST_ONLY' });
   assert.equal(switched.error, null);
   // Supabase Auth internamente encapsula falhas do fetch; basta que não haja PUT a B.
-  let blockedError;
+  let blockedError: unknown;
   try { blockedError = (await client.updatePassword(ownerA, 'MUST_NOT_REACH_B')).error; } catch (error) { blockedError = error; }
   assert.ok(blockedError);
   assert.equal(calls.filter((call) => call.method === 'PUT').length, mutations);
 });
 
 test('resposta HTTP de login antigo é descartada antes de o SDK persistir sua sessão', async (t) => {
-  const requested = deferred(); const incoming = deferred();
+  const requested = deferred<void>(); const incoming = deferred<Response>();
   const client = createGameAuthClient({ url: 'https://stale-test.supabase.co', key: 'sb_publishable_TEST_ONLY', storageKey: `game-ia:test:${randomUUID()}` }, {
-    fetch: async (request) => {
+    fetch: async (input, init) => {
+      const request = input instanceof Request ? input : new Request(input, init);
       if (new URL(request.url).pathname.endsWith('/token')) { requested.resolve(); return incoming.promise; }
       return new Response('{}', { headers: { 'content-type': 'application/json' } });
     },

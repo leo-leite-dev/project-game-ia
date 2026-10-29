@@ -6,13 +6,18 @@ import {
   readAudioPrefs,
   writeAudioPrefs,
 } from '../../src/audio/audioPrefs.ts';
+import type { StorageLike } from '../../src/types/domain.ts';
 
-function createMemoryStorage(initial = {}) {
+function createMemoryStorage(initial: Record<string, string> = {}): StorageLike & { dump(): Record<string, string> } {
   const map = new Map(Object.entries(initial));
   return {
-    getItem: (key) => (map.has(key) ? map.get(key) : null),
-    setItem: (key, value) => map.set(key, String(value)),
-    removeItem: (key) => map.delete(key),
+    getItem: (key) => map.get(key) ?? null,
+    setItem: (key, value) => {
+      map.set(key, String(value));
+    },
+    removeItem: (key) => {
+      map.delete(key);
+    },
     dump: () => Object.fromEntries(map),
   };
 }
@@ -41,6 +46,6 @@ test('gravar e reler preferências preserva os valores válidos', () => {
   const storage = createMemoryStorage();
   writeAudioPrefs(storage, { musicVolume: 0.25, sfxVolume: 0.5, muted: true });
   assert.deepEqual(readAudioPrefs(storage), { musicVolume: 0.25, sfxVolume: 0.5, muted: true });
-  const stored = JSON.parse(storage.dump()['game-ia:audio-prefs:v1']);
-  assert.deepEqual(Object.keys(stored).sort(), ['musicVolume', 'muted', 'sfxVolume']);
+  const stored = JSON.parse(storage.dump()['game-ia:audio-prefs:v1']) as unknown;
+  assert.deepEqual(Object.keys(stored as Record<string, unknown>).sort(), ['musicVolume', 'muted', 'sfxVolume']);
 });

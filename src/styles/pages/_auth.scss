@@ -1,4 +1,4 @@
-/* ReGenesis Arcade — identidade synthwave anos 80:
+/* Tela de acesso existente — preservada durante a reformulação da dashboard.
    neon magenta/roxo, sol poente, grade retrô e scanlines. */
 :root {
   color-scheme: dark;
@@ -144,6 +144,8 @@ body::after {
 .auth-account div { min-width: 0; }
 .auth-account div span { display: block; margin-bottom: 6px; color: #7fc9e8; font-size: 8px; letter-spacing: 0.08em; }
 .auth-account strong { display: block; color: #e8f8ff; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.auth-role-badge { display: inline-block; margin-top: 7px; padding: 2px 8px; border: 1px solid #5b3a9e; border-radius: 999px; color: #a391c7; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; }
+.auth-role-badge[data-role="admin"] { border-color: #ff2e9780; color: #ff9ad4; box-shadow: 0 0 12px #ff2e972b; }
 .auth-entry > p { color: #b7a6d6; font-size: 11px; line-height: 1.7; }
 .auth-progress-note { margin: 22px 0; padding: 13px 0; border-top: 1px solid #9b5cff40; border-bottom: 1px solid #9b5cff40; }
 .auth-progress-note strong { color: #ddd2ff; font-size: 12px; font-weight: 600; }
@@ -156,6 +158,29 @@ body::after {
 .auth-game-card p { margin: 0; color: #b7a6d6; font-size: 11px; line-height: 1.6; }
 .auth-game-status { justify-self: start; margin-top: 4px; padding: 3px 8px; border: 1px solid #01cdfe55; border-radius: 999px; color: var(--auth-cyan); font-size: 8px; font-weight: 700; letter-spacing: 0.12em; }
 .auth-games-empty { margin: 16px 0 0; padding: 16px; border: 1px dashed #9b5cff66; border-radius: 8px; background: #170a3399; color: #a391c7; font-size: 11px; line-height: 1.6; text-align: center; }
+
+.auth-game-play { justify-self: start; margin-top: 6px; padding: 7px 14px; border: 1px solid #ff2e9766; border-radius: 5px; background: linear-gradient(110deg, #ff2e97, #9b5cff); color: #fff; font-size: 9px; font-weight: 800; letter-spacing: 0.09em; text-decoration: none; box-shadow: 0 0 16px #ff2e9726; }
+.auth-game-play:hover { background: linear-gradient(110deg, #ff58ab, #b17aff); }
+
+.auth-admin { margin-top: 24px; padding-top: 18px; border-top: 1px solid #ff2e9733; }
+.auth-admin h3 { margin: 0 0 12px; color: var(--auth-magenta); font-size: 10px; font-weight: 800; letter-spacing: 0.14em; }
+.auth-admin-message { margin: 0 0 12px; padding: 10px; border: 1px solid #7b5cff4f; border-radius: 5px; background: #2b1b5c55; color: #ddd2ff; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.auth-admin-form { margin-bottom: 16px; }
+.auth-admin-form .auth-field { margin-bottom: 12px; }
+.auth-admin-available { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; color: #cbb9ec; font-size: 10px; letter-spacing: 0.06em; }
+.auth-admin-available input[type="checkbox"] { accent-color: var(--auth-magenta); }
+.auth-admin-actions { display: flex; align-items: center; gap: 14px; }
+.auth-admin-actions .auth-primary { margin-top: 0; }
+
+.auth-admin-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.auth-admin-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid #5b3a9e55; border-radius: 6px; background: #170a33aa; }
+.auth-admin-row-info { display: grid; gap: 3px; min-width: 0; }
+.auth-admin-row-info strong { color: #ffd6f4; font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
+.auth-admin-badge { color: #8f7cb8; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; }
+.auth-admin-badge.is-published { color: var(--auth-cyan); }
+.auth-admin-row-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.auth-admin-action { padding: 5px 9px; border: 1px solid #6b4fae; border-radius: 4px; background: #1d104080; color: #e6dbff; font-size: 8px; font-weight: 700; letter-spacing: 0.06em; }
+.auth-admin-action:hover:not(:disabled) { border-color: #a98ae0; background: #291659; }
 
 @keyframes auth-spin { to { transform: rotate(360deg); } }
 @keyframes auth-orbit-pulse { 50% { opacity: 0.4; box-shadow: 0 0 25px #ffd16655; } }
