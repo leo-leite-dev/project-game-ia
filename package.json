@@ -4,14 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
+    "test:auth": "node --test tests/auth/authService.test.js tests/auth/authController.test.js tests/auth/authView.test.js tests/auth/supabaseTransport.test.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^26.6.6",
+    "happy-dom": "21.0.4",
+    "typescript": "^7.0.2",
     "vite": "^8.3.5"
   },
   "dependencies": {
-    "three": "^0.186.1"
+    "@supabase/supabase-js": "2.118.0"
   }
 }

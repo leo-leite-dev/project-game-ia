@@ -1,0 +1,65 @@
+<main class="auth-shell">
+  <div class="auth-grid" aria-hidden="true"></div>
+  <section class="auth-intro" aria-labelledby="brand-title">
+    <a class="auth-brand" href="/" aria-label="ReGenesis Arcade — início"><span class="brand-symbol" aria-hidden="true">R<span>▣</span></span> REGENESIS <b>ARCADE</b></a>
+    <div class="digital-orbit" aria-hidden="true"><div class="orbit-ring"></div><div class="orbit-core"><span>デジタル</span><b>D</b><small>WORLD LINK</small></div><i></i><i></i></div>
+    <p class="auth-eyebrow">// PORTAL DE JOGOS</p>
+    <h1 id="brand-title">Uma nova conexão.<br /><em>Sua coleção de jogos.</em></h1>
+    <p class="auth-intro-copy">Conecte sua conta e acesse os jogos que você publicar nesta plataforma. Seu progresso em cada um fica salvo na sua conta.</p>
+    <div class="auth-feature-strip"><span>IDENTIDADE SEGURA</span><span>SEUS JOGOS</span><span>PROGRESSO NA CONTA</span></div>
+  </section>
+
+  <section class="auth-card" aria-labelledby="auth-title">
+    <div class="auth-card-top"><span class="auth-terminal-dot" aria-hidden="true"></span><span>TERMINAL DE ACESSO</span><small>01 / CONTA</small></div>
+    <div class="auth-card-content">
+      <div id="auth-configuration" class="auth-configuration" role="status" hidden></div>
+      <nav id="auth-tabs" class="auth-tabs" role="tablist" aria-label="Acesso à conta">
+        <button id="auth-tab-signin" type="button" role="tab" data-auth-mode="signin" aria-controls="auth-form-panel" aria-selected="true">ENTRAR</button>
+        <button id="auth-tab-signup" type="button" role="tab" data-auth-mode="signup" aria-controls="auth-form-panel" aria-selected="false" tabindex="-1">CRIAR CONTA</button>
+      </nav>
+      <div class="auth-heading"><p id="auth-kicker" class="auth-eyebrow">// BEM-VINDO DE VOLTA</p><h2 id="auth-title">Acesse sua conta</h2><p id="auth-description">Entre para continuar sua conexão com o Mundo Digital.</p></div>
+      <div id="auth-message" class="auth-message" role="status" aria-live="polite" hidden></div>
+      <div id="auth-checking" class="auth-checking" hidden><span class="auth-spinner" aria-hidden="true"></span><span>Sincronizando acesso seguro...</span></div>
+
+      <div id="auth-form-panel" role="tabpanel" aria-labelledby="auth-tab-signin">
+        <form id="auth-form" novalidate>
+          <div id="auth-email-field" class="auth-field">
+            <label for="auth-email">E-MAIL</label><input id="auth-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="voce@exemplo.com" required />
+          </div>
+          <div id="auth-password-field" class="auth-field">
+            <div class="auth-label-row"><label for="auth-password">SENHA</label><button id="auth-forgot" class="auth-text-button" type="button">Esqueci minha senha</button></div>
+            <div class="auth-password-shell"><input id="auth-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" aria-describedby="auth-password-hint" required /><button id="auth-password-toggle" class="auth-eye" type="button" aria-label="Mostrar senha" aria-pressed="false">◉</button></div>
+            <p id="auth-password-hint" class="auth-input-hint" hidden>Pelo menos 8 caracteres. O serviço pode exigir regras adicionais.</p>
+          </div>
+          <div id="auth-confirm-field" class="auth-field" hidden>
+            <label for="auth-confirm">CONFIRMAR SENHA</label><input id="auth-confirm" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Repita a nova senha" />
+          </div>
+          <button id="auth-submit" class="auth-primary" type="submit"><span>ENTRAR NO MUNDO DIGITAL</span><span aria-hidden="true">→</span></button>
+        </form>
+        <div id="auth-google-section"><div class="auth-divider"><span>OU CONECTE COM</span></div><button id="auth-google" class="auth-google" type="button"><span class="google-mark" aria-hidden="true">G</span> Entrar com Google</button><p class="auth-google-note">Google em fase de testes: use uma conta autorizada.</p></div>
+      </div>
+
+      <div id="auth-entry" class="auth-entry" hidden>
+        <div class="auth-account"><span class="auth-account-icon" aria-hidden="true">✓</span><div><span>CONTA AUTENTICADA</span><strong id="auth-user-email"></strong></div></div>
+        <p>Sua identidade foi verificada pelo Supabase Auth.</p>
+        <div id="auth-progress-note" class="auth-progress-note"><strong>Seus jogos, em breve.</strong><p>Os jogos que você publicar nesta plataforma aparecerão aqui. O progresso de cada jogo ficará associado a esta conta.</p></div>
+        <ul id="auth-games-list" class="auth-games-list" aria-label="Jogos disponíveis"></ul>
+        <p id="auth-games-empty" class="auth-games-empty">Nenhum jogo disponível no momento.</p>
+        <button id="auth-logout" class="auth-secondary" type="button">Sair da conta</button>
+      </div>
+      <button id="auth-back" class="auth-back auth-text-button" type="button" hidden>← Voltar para entrar</button>
+      <button id="auth-cancel-recovery" class="auth-back auth-text-button" type="button" hidden>Cancelar recuperação e sair</button>
+      <button id="auth-retry-logout" class="auth-secondary" type="button" hidden>Tentar sair novamente</button>
+      <div id="auth-session-actions" class="auth-session-actions" hidden><button id="auth-retry-session" class="auth-secondary" type="button">Tentar validar sessão</button><button id="auth-session-logout" class="auth-back auth-text-button" type="button">Sair e entrar novamente</button></div>
+      <p class="auth-security-caption">CONEXÃO PROTEGIDA · SUPABASE AUTH</p>
+    </div>
+  </section>
+  <footer class="auth-footer">
+    <span>REGENESIS ARCADE</span>
+    <div class="auth-audio-controls" role="group" aria-label="Controles de áudio">
+      <button id="auth-audio-toggle" class="auth-audio-button" type="button" aria-pressed="false" aria-label="Ligar música">♪</button>
+      <label class="auth-audio-volume" for="auth-audio-volume"><span aria-hidden="true">VOL</span><input id="auth-audio-volume" type="range" min="0" max="100" step="5" value="70" aria-label="Volume da música" /></label>
+    </div>
+    <span>SEU ARCADE RETRO ONLINE</span>
+  </footer>
+</main>
