@@ -26,8 +26,9 @@ test('configuração aceita apenas URL segura e chave pública; não exige crede
   assert.throws(() => readAuthConfig({ VITE_SUPABASE_URL: 'http://example.supabase.co', VITE_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_TEST' }));
   assert.equal(decodeJwtPayload('invalid'), null);
   assert.equal(authRedirectUrl('http://localhost:5173'), 'http://localhost:5173/auth/callback');
-  assert.equal(authRedirectUrl('https://project-regenesis-arcarde.pages.dev'), 'https://project-regenesis-arcarde.pages.dev/auth/callback');
-  assert.equal(authRedirectUrl('https://project-game-ia.pages.dev'), 'https://project-game-ia.pages.dev/auth/callback');
+  assert.equal(authRedirectUrl('https://project-regenesis-arcade.pages.dev'), 'https://project-regenesis-arcade.pages.dev/auth/callback');
+  assert.throws(() => authRedirectUrl('https://project-regenesis-arcarde.pages.dev'));
+  assert.throws(() => authRedirectUrl('https://project-game-ia.pages.dev'));
   assert.throws(() => authRedirectUrl('http://127.0.0.1:5173'));
   assert.throws(() => authRedirectUrl('https://attacker.example'));
 });
@@ -157,6 +158,29 @@ test('OAuth e recuperação usam callback permitido; URL externa inesperada é r
   assert.deepEqual(calls.find(([name]) => name === 'resetPasswordForEmail')![1], ['a@example.test', { redirectTo: 'http://localhost:5173/auth/callback' }]);
   responses.signInWithOAuth = () => ({ data: { url: 'https://attacker.example/' }, error: null });
   await assert.rejects(service.googleUrl(), { code: 'invalid-redirect' });
+});
+
+test('Google OAuth em produção retorna ao callback no domínio Cloudflare atual', async () => {
+  const productionOrigin = 'https://project-regenesis-arcade.pages.dev';
+  const fake = fakeAuthClient();
+  const productionService = createAuthService({
+    ...fake,
+    origin: productionOrigin,
+    projectUrl: 'https://example.supabase.co',
+  });
+
+  await productionService.googleUrl();
+
+  assert.deepEqual(
+    fake.calls.find(([name]) => name === 'signInWithOAuth')?.[1],
+    {
+      provider: 'google',
+      options: {
+        redirectTo: `${productionOrigin}/auth/callback`,
+        skipBrowserRedirect: true,
+      },
+    },
+  );
 });
 
 test('um único responsável troca código PKCE, inclusive chamadas simultâneas e sb_flow_id', async () => {

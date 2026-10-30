@@ -73,14 +73,14 @@ Endereços permitidos no código:
 
 ```text
 http://localhost:5173/auth/callback
-https://project-regenesis-arcarde.pages.dev/auth/callback
-https://project-game-ia.pages.dev/auth/callback
+https://project-regenesis-arcade.pages.dev/auth/callback
 ```
 
-A configuração remota informada pelo usuário foi respeitada. Domínios, Google OAuth
-e listas de redirecionamento não foram modificados. Para publicação futura, preencher
-as mesmas variáveis públicas no ambiente autorizado do Cloudflare Pages, em uma etapa
-separada de autorização; esta entrega não faz deploy.
+A allowlist do aplicativo contém somente `http://localhost:5173` e o domínio atual
+`https://project-regenesis-arcade.pages.dev`. O fluxo Google OAuth usa a origem atual
+para retornar a `/auth/callback`; mantenha esse callback também na lista de Redirect
+URLs do Supabase. O callback OAuth do provedor Google continua sendo o endpoint Auth
+do próprio projeto Supabase.
 
 ## 3. Como os fluxos funcionam
 

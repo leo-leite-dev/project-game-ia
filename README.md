@@ -62,7 +62,7 @@ tests/            # testes (node:test)
 ## Publicação
 
 - **Hospedagem:** Cloudflare Pages, com publicação automática a cada push na branch `main`
-- **Site:** https://project-regenesis-arcarde.pages.dev (nome anterior: project-game-ia.pages.dev)
+- **Site:** https://project-regenesis-arcade.pages.dev
 - **Variáveis de ambiente:** apenas chaves públicas com prefixo `VITE_` — nenhum segredo no frontend
 
 Documentação: [`AUTENTICACAO.md`](./AUTENTICACAO.md) (fluxo de autenticação completo) e [`AGENTS.md`](./AGENTS.md) (padrões de desenvolvimento do projeto).

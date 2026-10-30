@@ -130,7 +130,7 @@ Após implementar alterações:
 
 - Hospedagem oficial: **Cloudflare Pages**.
 - Repositório: https://github.com/leo-leite-dev/project-regenesis-arcarde
-- Site publicado: https://project-regenesis-arcarde.pages.dev (nome anterior: project-game-ia.pages.dev)
+- Site publicado: https://project-regenesis-arcade.pages.dev
 - Branch de produção: `main`.
 - O Cloudflare Pages está conectado ao repositório GitHub e publica automaticamente a cada envio de alterações para `main`.
 - Não é necessário configurar GitHub Pages, Vercel, Netlify, `CLOUDFLARE_API_TOKEN` ou outro provedor.
