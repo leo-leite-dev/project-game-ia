@@ -80,14 +80,16 @@ interface Row {
   entry: string;
   available: boolean;
   sort_order: number;
+  cover_path?: string;
 }
 
 const published: Row = { id: 'id-1', slug: 'publicado', title: 'Publicado', description: '', entry: '/jogos/publicado/', available: true, sort_order: 0 };
 const draft: Row = { id: 'id-2', slug: 'rascunho', title: 'Rascunho', description: '', entry: '', available: false, sort_order: 1 };
 
 /** Duplo do PostgREST que aplica o mesmo RLS da migração. */
-function createFakeClient(rows: Row[], { admin }: { admin: boolean }): SupabaseClient {
+function createFakeClient(rows: Row[], { admin }: { admin: boolean }): { client: SupabaseClient; removed: string[][] } {
   const state = { rows: [...rows] };
+  const removed: string[][] = [];
   const visible = (row: Row): boolean => admin || row.available;
   const ok = (data: unknown) => ({ data, error: null });
   const rlsDenied = () => ({ data: null, error: { message: 'new row violates row-level security policy (simulado)' } });
@@ -105,13 +107,14 @@ function createFakeClient(rows: Row[], { admin }: { admin: boolean }): SupabaseC
       }
       if (!admin) return rlsDenied();
       if (op === 'insert') {
-        const created = { description: '', entry: '', sort_order: 0, ...payload } as unknown as Row;
+        const created = { description: '', entry: '', sort_order: 0, cover_path: '', ...payload } as unknown as Row;
         state.rows.push(created);
         return ok(created);
       }
       if (op === 'update') {
         const targets = state.rows.filter((row) => filters.every((matches) => matches(row)));
         for (const target of targets) Object.assign(target, payload);
+        if (wantSingle) return targets[0] ? ok(targets[0]) : { data: null, error: { message: 'not found' } };
         return ok(targets);
       }
       state.rows = state.rows.filter((row) => !filters.every((matches) => matches(row)));
@@ -133,29 +136,89 @@ function createFakeClient(rows: Row[], { admin }: { admin: boolean }): SupabaseC
     return chain;
   }
 
-  // O serviço só usa a cadeia from('games') → select/insert/update/delete.
-  return { from: () => builder() } as unknown as SupabaseClient;
+  // O serviço usa from('games') → PostgREST e storage.from(bucket) → capas.
+  const client = {
+    from: () => builder(),
+    storage: {
+      from(bucket: string) {
+        return {
+          getPublicUrl(path: string) {
+            return { data: { publicUrl: `https://fake.supabase.co/storage/v1/object/public/${bucket}/${path}` } };
+          },
+          async remove(paths: string[]) {
+            removed.push(paths);
+            return { data: paths, error: null };
+          },
+          async upload(path: string) {
+            return { data: { path }, error: { message: 'upload não usado neste cenário' } };
+          },
+        };
+      },
+    },
+  } as unknown as SupabaseClient;
+  return { client, removed };
 }
 
 test('cenário público/comum: listagem do membro nunca devolve rascunhos', async () => {
-  const service = createCatalogService(createFakeClient([published, draft], { admin: false }));
+  const { client } = createFakeClient([published, draft], { admin: false });
+  const service = createCatalogService(client);
   const games = await service.listFor('member');
   assert.deepEqual(games.map((entry) => entry.slug), ['publicado']);
   assert.equal(games.some((entry) => !entry.available), false);
 });
 
 test('cenário admin: painel enxerga publicados e rascunhos', async () => {
-  const service = createCatalogService(createFakeClient([published, draft], { admin: true }));
+  const { client } = createFakeClient([published, draft], { admin: true });
+  const service = createCatalogService(client);
   const all = await service.listFor('admin');
   assert.deepEqual(all.map((entry) => entry.slug), ['publicado', 'rascunho']);
 });
 
 test('tentativa de escrita sem papel admin é recusada com o erro do RLS', async () => {
-  const service = createCatalogService(createFakeClient([published], { admin: false }));
+  const { client } = createFakeClient([published], { admin: false });
+  const service = createCatalogService(client);
   await assert.rejects(
     service.create({ slug: 'invasor', title: 'Invasor', description: '', entry: '', available: true, sortOrder: 0 }),
     /row-level security/,
   );
   await assert.rejects(service.update('id-1', { title: 'Alterado' }), /row-level security/);
   await assert.rejects(service.remove('id-1'), /row-level security/);
+});
+
+test('capa: listFor devolve URL pública derivada do bucket', async () => {
+  const withCover: Row = { ...published, id: 'id-3', slug: 'com-capa', cover_path: 'capa-uuid.png' };
+  const { client } = createFakeClient([withCover, published], { admin: true });
+  const service = createCatalogService(client);
+  const all = await service.listFor('admin');
+  const covered = all.find((entry) => entry.slug === 'com-capa');
+  assert.equal(covered?.coverUrl, 'https://fake.supabase.co/storage/v1/object/public/game-covers/capa-uuid.png');
+  const plain = all.find((entry) => entry.slug === 'publicado');
+  assert.equal(plain?.coverUrl, '', 'registro sem capa fica com URL vazia');
+});
+
+test('remover jogo apaga também o arquivo da capa (após a linha sair do banco)', async () => {
+  const withCover: Row = { ...published, id: 'id-3', slug: 'com-capa', cover_path: 'capa-uuid.png' };
+  const { client, removed } = createFakeClient([withCover], { admin: true });
+  const service = createCatalogService(client);
+  await service.remove('id-3');
+  assert.deepEqual(removed, [['capa-uuid.png']]);
+  assert.equal((await service.listFor('admin')).length, 0, 'linha removida do catálogo');
+});
+
+test('trocar a capa apaga o arquivo antigo e grava o caminho novo', async () => {
+  const withCover: Row = { ...published, id: 'id-3', slug: 'com-capa', cover_path: 'antiga.png' };
+  const { client, removed } = createFakeClient([withCover], { admin: true });
+  const service = createCatalogService(client);
+  const updated = await service.update('id-3', { coverPath: 'nova.png' });
+  assert.equal(updated.coverUrl, 'https://fake.supabase.co/storage/v1/object/public/game-covers/nova.png');
+  assert.deepEqual(removed, [['antiga.png']]);
+});
+
+test('limpar capa (coverPath vazio) remove a URL e apaga o arquivo antigo', async () => {
+  const withCover: Row = { ...published, id: 'id-3', slug: 'com-capa', cover_path: 'antiga.png' };
+  const { client, removed } = createFakeClient([withCover], { admin: true });
+  const service = createCatalogService(client);
+  const updated = await service.update('id-3', { coverPath: '' });
+  assert.equal(updated.coverUrl, '');
+  assert.deepEqual(removed, [['antiga.png']]);
 });

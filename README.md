@@ -9,6 +9,8 @@
 - Login, cadastro, recuperação de senha e sessão via **Supabase Auth** (fluxo PKCE), com callback em `/auth/callback`
 - **Papéis admin/member**: só a conta do dono (`app_metadata.role = admin`) gerencia o catálogo; demais contas veem e jogam
 - **Catálogo remoto** (tabela `public.games` com RLS) e painel admin na hub para publicar/editar/despublicar jogos
+- **Capa de imagem por jogo**: upload no bucket `game-covers` do Supabase Storage (só admin escreve; 5 MB e MIMEs de imagem limitados no servidor)
+- **Prateleira em estilo cartucho de Super Nintendo**: a capa aparece no "rótulo" do cartucho (arte neon de fallback quando não há capa)
 - Hub pós-login com catálogo tipado e estado vazio honesto ("nenhum jogo disponível")
 - Contrato de saves por conta (`userId` + `gameId` + versão) sobre `localStorage`, preparado para Supabase + RLS
 - Música *8-bit rock* e efeitos sonoros gerados por **Web Audio** (sem arquivos de mídia), com controles no rodapé
@@ -60,7 +62,7 @@ tests/            # testes (node:test)
 ## Publicação
 
 - **Hospedagem:** Cloudflare Pages, com publicação automática a cada push na branch `main`
-- **Site:** https://project-game-ia.pages.dev
+- **Site:** https://project-regenesis-arcarde.pages.dev (nome anterior: project-game-ia.pages.dev)
 - **Variáveis de ambiente:** apenas chaves públicas com prefixo `VITE_` — nenhum segredo no frontend
 
 Documentação: [`AUTENTICACAO.md`](./AUTENTICACAO.md) (fluxo de autenticação completo) e [`AGENTS.md`](./AGENTS.md) (padrões de desenvolvimento do projeto).

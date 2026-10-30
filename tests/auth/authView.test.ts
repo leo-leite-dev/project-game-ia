@@ -91,8 +91,8 @@ test('painel admin só aparece para conta com papel admin e lista os jogos', (t)
   view.render({
     mode: 'authenticated',
     user: { id: 'user-a', email: 'a@example.test', provider: 'email', role: 'member' },
-    games: [{ id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 }],
-    adminGames: [{ id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 }],
+    games: [{ id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 , coverUrl: '' }],
+    adminGames: [{ id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 , coverUrl: '' }],
   });
   // Membro: o painel admin NEM FICA no DOM (removido da árvore) e a cópia é de jogador.
   assert.equal(root.querySelector('#auth-admin'), null);
@@ -103,10 +103,10 @@ test('painel admin só aparece para conta com papel admin e lista os jogos', (t)
   view.render({
     mode: 'authenticated',
     user: { id: 'user-a', email: 'a@example.test', provider: 'email', role: 'admin' },
-    games: [{ id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 }],
+    games: [{ id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 , coverUrl: '' }],
     adminGames: [
-      { id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 },
-      { id: 'g2', slug: 'rascunho', title: 'Rascunho', description: '', entry: '', available: false, sortOrder: 0 },
+      { id: 'g1', slug: 'jogo-um', title: 'Jogo Um', description: '', entry: '/jogos/jogo-um/', available: true, sortOrder: 0 , coverUrl: '' },
+      { id: 'g2', slug: 'rascunho', title: 'Rascunho', description: '', entry: '', available: false, sortOrder: 0 , coverUrl: '' },
     ],
     catalogMessage: 'Jogo salvo no catálogo.',
   });
@@ -125,14 +125,35 @@ test('painel admin só aparece para conta com papel admin e lista os jogos', (t)
   assert.equal(el(root, 'auth-role-badge').hidden, true);
 });
 
+test('formulário novo de publicação nasce com "Publicar imediatamente" marcado e edição respeita o rascunho', (t) => {
+  const { view, root } = setup(t);
+  const draft = { id: 'g1', slug: 'riffshot-racing', title: 'Riffshot Racing', description: '', entry: '', available: false, sortOrder: 0 , coverUrl: '' };
+  view.render({
+    mode: 'authenticated',
+    user: { id: 'user-a', email: 'a@example.test', provider: 'email', role: 'admin' },
+    games: [],
+    adminGames: [draft],
+  });
+  // Novo jogo: o botão diz PUBLICAR JOGO, então a checkbox vem marcada.
+  assert.equal(input(root, 'game-available').checked, true);
+  // Editar um rascunho carrega o estado real do registro (desmarcado).
+  const edit = el(root, 'auth-admin-list').querySelector('[data-game-action="edit"]') as unknown as HTMLButtonElement;
+  edit.click();
+  assert.equal(input(root, 'game-available').checked, false);
+  assert.equal(button(root, 'auth-admin-submit').textContent?.includes('SALVAR ALTERAÇÕES'), true);
+  // Cancelar a edição volta ao formulário novo publicável por padrão.
+  node(root, 'auth-admin-cancel').click();
+  assert.equal(input(root, 'game-available').checked, true);
+});
+
 test('dashboard renderiza apenas jogos publicados recebidos, busca e preserva o player ao trocar de tela', (t) => {
   const { view, root, window } = setup(t);
   const user = { id: 'user-a', email: 'jogador@example.test', provider: 'email', role: 'member' as const };
   view.render({
     mode: 'authenticated', user,
     games: [
-      { id: 'g1', slug: 'rota-neon', title: 'Rota Neon', description: 'Jogo cadastrado', entry: '/jogos/rota-neon/', available: true, sortOrder: 0 },
-      { id: 'g2', slug: 'rascunho', title: 'Rascunho', description: 'Não publicado', entry: '', available: false, sortOrder: 1 },
+      { id: 'g1', slug: 'rota-neon', title: 'Rota Neon', description: 'Jogo cadastrado', entry: '/jogos/rota-neon/', available: true, sortOrder: 0 , coverUrl: '' },
+      { id: 'g2', slug: 'rascunho', title: 'Rascunho', description: 'Não publicado', entry: '', available: false, sortOrder: 1 , coverUrl: '' },
     ],
   });
   assert.equal(el(root, 'dashboard-feature-title').textContent, 'Rota Neon');
@@ -148,4 +169,75 @@ test('dashboard renderiza apenas jogos publicados recebidos, busca e preserva o 
   assert.equal(el(root, 'auth-games-empty').textContent, 'Nenhum jogo corresponde à busca.');
   view.render({ mode: 'signin' });
   assert.ok(node(root, 'auth-footer-audio-slot').querySelector('#auth-audio-toggle'));
+});
+
+test('capa aparece no pôster e na prévia do painel; descrição longa ganha "ver mais"', (t) => {
+  const { view, root } = setup(t);
+  const coverUrl = 'https://fake.supabase.co/storage/v1/object/public/game-covers/capa.png';
+  const longDescription = 'Corredores neon disputam raios pelas ruas da cidade synthwave em noites que nunca terminam.';
+  const covered = { id: 'g1', slug: 'riffshot-racing', title: 'Riffshot Racing', description: longDescription, entry: '/jogos/riffshot-racing/', available: true, sortOrder: 0, coverUrl };
+  const shortOne = { id: 'g2', slug: 'curto', title: 'Curto', description: 'Resumo curto.', entry: '', available: true, sortOrder: 1, coverUrl: '' };
+  view.render({
+    mode: 'authenticated',
+    user: { id: 'user-a', email: 'a@example.test', provider: 'email', role: 'admin' },
+    games: [covered, shortOne],
+    adminGames: [covered, shortOne],
+  });
+  const list = el(root, 'auth-games-list');
+  const coverImg = list.querySelector('.dashboard-game-poster-img') as unknown as HTMLImageElement | null;
+  assert.equal(coverImg?.getAttribute('src'), coverUrl, 'pôster exibe a capa real');
+  assert.equal(list.querySelectorAll('.dashboard-game-poster-img').length, 1, 'só o jogo com capa ganha imagem');
+  // Descrição longa ganha o controle; descrição curta não.
+  const expand = list.querySelector('.auth-game-more') as unknown as HTMLButtonElement | null;
+  assert.ok(expand, 'descrição longa mostra "ver mais"');
+  assert.equal(expand.textContent, 'ver mais');
+  assert.equal(expand.getAttribute('aria-expanded'), 'false');
+  assert.equal(list.querySelectorAll('.auth-game-more').length, 1);
+  expand.click();
+  assert.equal(expand.closest('.auth-game-card')?.classList.contains('is-expanded'), true);
+  assert.equal(expand.textContent, 'ver menos');
+  expand.click();
+  assert.equal(expand.textContent, 'ver mais');
+  // Editar mostra a capa atual na prévia do formulário do painel.
+  const edit = el(root, 'auth-admin-list').querySelector('[data-game-action="edit"]') as unknown as HTMLButtonElement;
+  edit.click();
+  assert.equal(el(root, 'game-cover-preview').hidden, false);
+  assert.equal((el(root, 'game-cover-image') as unknown as HTMLImageElement).getAttribute('src'), coverUrl);
+  assert.match(el(root, 'game-cover-hint').textContent ?? '', /Capa atual/);
+  // Cancelar a edição limpa prévia e campo de arquivo.
+  node(root, 'auth-admin-cancel').click();
+  assert.equal(el(root, 'game-cover-preview').hidden, true);
+  assert.equal(input(root, 'game-cover').value, '');
+});
+
+test('jogo PUBLICADO tem Editar no painel: preenche o formulário e submete com o id certo', (t) => {
+  const { view, root, window } = setup(t);
+  const published = { id: 'g1', slug: 'riffshot-racing', title: 'Riffshot Racing', description: 'Corrida neon.', entry: '/jogos/riffshot-racing/', available: true, sortOrder: 0, coverUrl: '' };
+  let savedId: string | null = null;
+  let savedTitle = '';
+  view.bind({
+    saveGame: (values, editingId) => {
+      savedId = editingId;
+      savedTitle = values.title;
+    },
+  });
+  view.render({
+    mode: 'authenticated',
+    user: { id: 'user-a', email: 'a@example.test', provider: 'email', role: 'admin' },
+    games: [published],
+    adminGames: [published],
+  });
+  const row = el(root, 'auth-admin-list').children[0] as unknown as HTMLElement;
+  assert.match(row.textContent ?? '', /PUBLICADO/, 'linha publicada aparece no painel');
+  const edit = row.querySelector('[data-game-action="edit"]') as unknown as HTMLButtonElement;
+  assert.ok(edit, 'linha publicada tem o botão Editar');
+  edit.click();
+  assert.equal(input(root, 'game-title').value, 'Riffshot Racing');
+  assert.equal(input(root, 'game-available').checked, true, 'publicado permanece marcado');
+  assert.equal(input(root, 'game-entry').value, '/jogos/riffshot-racing/');
+  assert.match(button(root, 'auth-admin-submit').textContent ?? '', /SALVAR ALTERAÇÕES/);
+  input(root, 'game-title').value = 'Riffshot Racing Turbo';
+  node(root, 'auth-admin-form').dispatchEvent(new window.Event('submit', { cancelable: true }));
+  assert.equal(savedId, 'g1', 'submissão leva o id em edição, não cria novo jogo');
+  assert.equal(savedTitle, 'Riffshot Racing Turbo');
 });

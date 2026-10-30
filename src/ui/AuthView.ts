@@ -42,6 +42,9 @@ const FIELD_TARGETS: Record<AuthFieldError['field'], string> = {
   confirmPassword: 'auth-confirm',
 };
 
+/** Descrições acima deste tamanho ganham o botão "ver mais" no card. */
+const DESCRIPTION_EXPAND_AT = 60;
+
 export interface AuthHandlers {
   submit?: (values: AuthFormValues) => void | Promise<void>;
   navigate?: (mode: AuthMode) => void;
@@ -74,6 +77,8 @@ export default class AuthView {
   private adminGames: GameEntry[] = [];
   private games: GameEntry[] = [];
   private gameRole: UserRole = 'member';
+  /** object URL criada para prévia da capa selecionada (revogada ao trocar). */
+  private coverPreviewObjectUrl: string | null = null;
   private readonly audioControls: HTMLElement;
 
   constructor(root: HTMLElement, { template, configured = true, configurationMessage = '' }: AuthViewOptions) {
@@ -162,6 +167,14 @@ export default class AuthView {
     });
     this.on('auth-admin-cancel', 'click', () => this.resetGameForm());
     this.on('auth-admin-list', 'click', (event) => this.onAdminListClick(event));
+    this.on('game-cover', 'change', () => {
+      const file = this.input('game-cover').files?.[0] ?? null;
+      if (!file) {
+        this.setCoverPreview(null, '');
+        return;
+      }
+      this.setCoverPreview(globalThis.URL.createObjectURL(file), `Selecionada: ${file.name}`);
+    });
     if (!configured) {
       this.el('auth-configuration').hidden = false;
       this.el('auth-configuration').textContent =
@@ -245,16 +258,40 @@ export default class AuthView {
       const item = this.doc.createElement('li');
       item.className = 'auth-game-card';
       const poster = this.doc.createElement('div');
-      poster.className = `dashboard-game-poster dashboard-game-poster--${index % 4}`;
+      poster.className = 'dashboard-game-poster';
       poster.setAttribute('aria-hidden', 'true');
-      const posterName = this.doc.createElement('span');
-      posterName.textContent = game.title;
-      poster.append(posterName);
+      // O rótulo do cartucho guarda a capa (ou a arte de fallback).
+      const label = this.doc.createElement('div');
+      label.className = `dashboard-game-poster-label dashboard-game-poster--${index % 4}`;
+      if (game.coverUrl) {
+        // Capa real cobre a arte gerada; se falhar o carregamento, o img sai
+        // e o rótulo volta a mostrar a arte CSS.
+        const cover = this.doc.createElement('img');
+        cover.className = 'dashboard-game-poster-img';
+        cover.src = game.coverUrl;
+        cover.alt = '';
+        cover.addEventListener('error', () => cover.remove());
+        label.append(cover);
+      }
+      poster.append(label);
       const title = this.doc.createElement('h3');
       title.textContent = game.title;
       const description = this.doc.createElement('p');
       description.textContent = game.description;
       item.append(poster, title, description);
+      if (game.description.length > DESCRIPTION_EXPAND_AT) {
+        const expand = this.doc.createElement('button');
+        expand.type = 'button';
+        expand.className = 'auth-game-more';
+        expand.textContent = 'ver mais';
+        expand.setAttribute('aria-expanded', 'false');
+        expand.addEventListener('click', () => {
+          const open = item.classList.toggle('is-expanded');
+          expand.textContent = open ? 'ver menos' : 'ver mais';
+          expand.setAttribute('aria-expanded', String(open));
+        });
+        item.append(expand);
+      }
       const href = this.safeEntryHref(game.entry);
       if (href) {
         const play = this.doc.createElement('a');
@@ -364,7 +401,32 @@ export default class AuthView {
       description: this.input('game-description').value.trim(),
       entry: this.input('game-entry').value.trim(),
       available: this.input('game-available').checked,
+      cover: this.input('game-cover').files?.[0] ?? null,
     };
+  }
+
+  private revokeCoverPreview(): void {
+    if (this.coverPreviewObjectUrl) {
+      globalThis.URL.revokeObjectURL(this.coverPreviewObjectUrl);
+      this.coverPreviewObjectUrl = null;
+    }
+  }
+
+  /** Prévia da capa: URL de object (arquivo novo) ou URL pública (atual). */
+  private setCoverPreview(src: string | null, hint: string): void {
+    const preview = this.el('game-cover-preview');
+    const image = this.el('game-cover-image') as HTMLImageElement;
+    this.revokeCoverPreview();
+    if (!src) {
+      preview.hidden = true;
+      image.removeAttribute('src');
+      this.el('game-cover-hint').textContent = '';
+      return;
+    }
+    image.src = src;
+    if (src.startsWith('blob:')) this.coverPreviewObjectUrl = src;
+    this.el('game-cover-hint').textContent = hint;
+    preview.hidden = false;
   }
 
   private resetGameForm(): void {
@@ -372,7 +434,11 @@ export default class AuthView {
     this.input('game-title').value = '';
     this.input('game-description').value = '';
     this.input('game-entry').value = '';
-    this.input('game-available').checked = false;
+    this.input('game-cover').value = '';
+    this.setCoverPreview(null, '');
+    // "Publicar imediatamente" vem marcado: o botão do formulário novo diz
+    // PUBLICAR JOGO, então o padrão deve publicar de fato (não criar rascunho).
+    this.input('game-available').checked = true;
     this.editingGameId = null;
     this.button('auth-admin-submit').firstElementChild!.textContent = 'PUBLICAR JOGO';
     this.el('auth-admin-cancel').hidden = true;
@@ -384,6 +450,11 @@ export default class AuthView {
     this.input('game-description').value = game.description;
     this.input('game-entry').value = game.entry;
     this.input('game-available').checked = game.available;
+    this.input('game-cover').value = '';
+    this.setCoverPreview(
+      game.coverUrl || null,
+      game.coverUrl ? 'Capa atual — selecione um arquivo para trocar.' : '',
+    );
     this.editingGameId = game.id;
     this.button('auth-admin-submit').firstElementChild!.textContent = 'SALVAR ALTERAÇÕES';
     this.el('auth-admin-cancel').hidden = false;
@@ -510,6 +581,7 @@ export default class AuthView {
 
   destroy(): void {
     this.abort.abort();
+    this.revokeCoverPreview();
     this.handlers = {};
     this.root.replaceChildren();
   }

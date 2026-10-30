@@ -1,5 +1,6 @@
 export const AUTH_ORIGINS: readonly string[] = Object.freeze([
   'http://localhost:5173',
+  'https://project-regenesis-arcarde.pages.dev',
   'https://project-game-ia.pages.dev',
 ]);
 

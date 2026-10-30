@@ -304,15 +304,18 @@ export default class AuthController {
 
   publishGame(values: GameFormValues): Promise<void> {
     return this.runCatalogAction(
-      () => {
+      async () => {
         if (!this.catalog) throw new Error('Catálogo indisponível.');
-        return this.catalog.create({
+        // Capa primeiro: se o envio falhar, nada é criado no catálogo.
+        const coverPath = values.cover ? await this.catalog.uploadCover(values.cover) : undefined;
+        await this.catalog.create({
           slug: values.slug,
           title: values.title,
           description: values.description,
           entry: values.entry,
           available: values.available,
           sortOrder: 0,
+          ...(coverPath ? { coverPath } : {}),
         });
       },
       'Jogo salvo no catálogo.',
@@ -321,14 +324,16 @@ export default class AuthController {
 
   updateGame(id: string, values: GameFormValues): Promise<void> {
     return this.runCatalogAction(
-      () => {
+      async () => {
         if (!this.catalog) throw new Error('Catálogo indisponível.');
-        return this.catalog.update(id, {
+        const coverPath = values.cover ? await this.catalog.uploadCover(values.cover) : undefined;
+        await this.catalog.update(id, {
           slug: values.slug,
           title: values.title,
           description: values.description,
           entry: values.entry,
           available: values.available,
+          ...(coverPath ? { coverPath } : {}),
         });
       },
       'Alterações salvas.',

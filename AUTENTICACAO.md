@@ -73,6 +73,7 @@ Endere√ßos permitidos no c√≥digo:
 
 ```text
 http://localhost:5173/auth/callback
+https://project-regenesis-arcarde.pages.dev/auth/callback
 https://project-game-ia.pages.dev/auth/callback
 ```
 
@@ -282,16 +283,18 @@ N√£o h√° c√≥digo de jogo 3D neste projeto: o `game-ia` √© a plataforma web de ac
 cat√°logo de jogos. O progresso por conta ser√° integrado quando os jogos e a
 persist√™ncia remota forem adicionados.
 
-## PapÈis: admin (dono) e member (usu·rio comum)
+## Pap√©is: admin (dono) e member (usu√°rio comum)
 
-- **admin**: ˙nica conta que publica, edita, despublica e exclui jogos no cat·logo (painel visÌvel na hub pÛs-login).
-- **member**: usu·rio comum ó vÍ apenas jogos publicados, joga e tem o progresso salvo por conta.
-- O papel vem de `app_metadata.role = "admin"` no Supabase. `app_metadata` **n„o È edit·vel pelo usu·rio** (sÛ via painel, service role ou SQL); valores inesperados caem sempre em `member`.
+- **admin**: √∫nica conta que publica, edita, despublica e exclui jogos no cat√°logo (painel vis√≠vel na hub p√≥s-login).
+- **member**: usu√°rio comum ‚Äî v√™ apenas jogos publicados, joga e tem o progresso salvo por conta.
+- O papel vem de `app_metadata.role = "admin"` no Supabase. `app_metadata` **n√£o √© edit√°vel pelo usu√°rio** (s√≥ via painel, service role ou SQL); valores inesperados caem sempre em `member`.
 
 ### Definir sua conta como admin (uma vez)
 
 1. Crie o projeto Supabase e configure `.env.local`.
-2. Rode a migraÁ„o `supabase/migrations/20261029130000_catalog_games.sql` no SQL Editor (cria a tabela `games` com RLS: leitura p˙blica, escrita sÛ admin).
-3. Rode tambÈm o comando de bootstrap indicado no final da migraÁ„o (troque o e-mail pelo seu). Depois, em **Authentication ? Users**, sua conta deve mostrar `app_metadata.role: "admin"`.
+2. Rode as migra√ß√µes de `supabase/migrations/` no SQL Editor, na ordem do nome do arquivo:
+   - `20261029130000_catalog_games.sql` ‚Äî tabela `games` com RLS: leitura p√∫blica, escrita s√≥ admin;
+   - `20261029210000_game_covers.sql` ‚Äî coluna `cover_path` e bucket `game-covers` no Storage: leitura p√∫blica, escrita s√≥ admin, capas de at√© 5 MB em PNG/JPEG/WebP/GIF/AVIF.
+3. Rode tamb√©m o comando de bootstrap indicado no final da migra√ß√£o do cat√°logo (troque o e-mail pelo seu). Depois, em **Authentication > Users**, sua conta deve mostrar `app_metadata.role: "admin"`.
 
-Sem esse passo, nenhuma conta tem acesso de escrita ó o painel admin n„o aparece e o RLS bloqueia mutations.
+Sem esse passo, nenhuma conta tem acesso de escrita: o painel admin n√£o aparece e o RLS bloqueia mutations.

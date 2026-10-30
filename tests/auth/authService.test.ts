@@ -26,6 +26,7 @@ test('configuração aceita apenas URL segura e chave pública; não exige crede
   assert.throws(() => readAuthConfig({ VITE_SUPABASE_URL: 'http://example.supabase.co', VITE_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_TEST' }));
   assert.equal(decodeJwtPayload('invalid'), null);
   assert.equal(authRedirectUrl('http://localhost:5173'), 'http://localhost:5173/auth/callback');
+  assert.equal(authRedirectUrl('https://project-regenesis-arcarde.pages.dev'), 'https://project-regenesis-arcarde.pages.dev/auth/callback');
   assert.equal(authRedirectUrl('https://project-game-ia.pages.dev'), 'https://project-game-ia.pages.dev/auth/callback');
   assert.throws(() => authRedirectUrl('http://127.0.0.1:5173'));
   assert.throws(() => authRedirectUrl('https://attacker.example'));

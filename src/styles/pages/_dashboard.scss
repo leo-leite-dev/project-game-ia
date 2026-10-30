@@ -46,31 +46,58 @@
 .dashboard-progress-placeholder p { max-width: 490px; margin: 6px 0 0; color: t.$muted; font-size: 11px; line-height: 1.5; }
 
 .dashboard .auth-progress-note { display: flex; min-height: 46px; align-items: center; gap: 14px; margin: 8px 0; padding: 7px 12px; border: 1px solid #8743a480; border-radius: 6px; background: linear-gradient(105deg, #351251bb, #171030); }
-.dashboard .auth-progress-note strong { flex: none; font-size: 11px; }
-.dashboard .auth-progress-note p { margin: 0; font-size: 9px; }
-.dashboard .auth-games-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.dashboard .auth-progress-note strong { flex: none; font-size: 12px; }
+.dashboard .auth-progress-note p { margin: 0; font-size: 11px; line-height: 1.5; }
+.dashboard .auth-games-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; }
 .dashboard .auth-game-card { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 0 0 7px; overflow: hidden; border-color: #794ea0; background: #150d30; }
-.dashboard .auth-game-card h3 { margin: 2px 8px 0; font-size: 11px; overflow-wrap: anywhere; }
-.dashboard .auth-game-card p { display: -webkit-box; min-height: 27px; margin: 0 8px; overflow: hidden; color: t.$muted; font-size: 9px; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.dashboard-game-poster { position: relative; display: grid; min-height: 148px; overflow: hidden; place-items: end center; padding: 12px 7px; background: radial-gradient(circle at 70% 25%, #eb5bfcaa, transparent 34%), linear-gradient(140deg, #302782, #25103d 62%, #b72681); }
-.dashboard-game-poster::before { position: absolute; inset: 20px -50px; border: 2px solid #d75bff88; border-radius: 50%; box-shadow: 0 0 33px #f725ad; transform: rotate(-32deg); content: ''; }
-.dashboard-game-poster::after { position: absolute; inset: 55% -10% -25%; transform: perspective(170px) rotateX(62deg); background: repeating-linear-gradient(0deg, transparent 0 12px, #d356ff77 13px 14px), repeating-linear-gradient(90deg, transparent 0 24px, #ff4dcb88 25px 26px); content: ''; }
-.dashboard-game-poster span { position: relative; z-index: 1; color: #fff; font-size: clamp(13px, 1.3vw, 22px); font-style: italic; font-weight: 900; line-height: 1; text-align: center; text-shadow: 2px 2px 0 #000, 0 0 12px t.$pink; text-transform: uppercase; overflow-wrap: anywhere; }
+.dashboard .auth-game-card h3 { margin: 2px 8px 0; font-size: 13px; overflow-wrap: anywhere; }
+.dashboard .auth-game-card p { display: -webkit-box; min-height: 27px; margin: 0 8px; overflow: hidden; color: t.$muted; font-size: 12px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.dashboard .auth-game-card.is-expanded p { display: block; -webkit-line-clamp: none; }
+.dashboard .auth-game-more { align-self: flex-start; margin: 0 8px; padding: 0; border: 0; background: none; color: #ff87cf; font-size: 11px; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.dashboard .auth-game-more:focus-visible { outline: 2px solid t.$pink; outline-offset: 2px; border-radius: 3px; }
+// Cartucho retrô (referência: referencias-visuais/fita.png): carcaça cinza
+// com sulcos laterais, rótulo com a capa e faixa preta para o título.
+// Cartucho retrô fiel à referência (referencias-visuais/fita.png, medida em
+// 2000x2000: corpo ~1.42:1): painéis laterais com 5 segmentos, parafusos no
+// rodapé, rótulo central no topo e rebaixo de agarre com plataforma entalhada.
+.dashboard-game-poster,
+.dashboard-empty-shelf > div {
+  position: relative;
+  display: flex;
+  aspect-ratio: 1.45 / 1;
+  padding: 6px 18% 26%;
+  overflow: hidden;
+  border: 1px solid #85828a;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 8.5% calc(100% - 11px), #a2926f 0 4px, #6b6154 5px, #4e463c 6px, #d9d6db 7px, #0000 8px),
+    radial-gradient(circle at 91.5% calc(100% - 11px), #a2926f 0 4px, #6b6154 5px, #4e463c 6px, #d9d6db 7px, #0000 8px),
+    linear-gradient(90deg, #0000 0 15.3%, #0000003d 15.3% 16.5%, #0000 16.5% 83.5%, #0000003d 83.5% 84.7%, #0000 84.7%),
+    linear-gradient(180deg, #b6b3b9 0 24.5%, #6d6a72 24.5% 26.2%, #d9d6db 26.2% 27.2%, #b6b3b9 27.2% 46%, #6d6a72 46% 47.7%, #d9d6db 47.7% 48.7%, #b6b3b9 48.7% 69%, #6d6a72 69% 70.7%, #d9d6db 70.7% 71.7%, #b6b3b9 71.7% 86%, #6d6a72 86% 87.7%, #d9d6db 87.7% 88.7%, #b6b3b9 88.7% 100%) no-repeat left top / 16% 100%,
+    linear-gradient(180deg, #b6b3b9 0 24.5%, #6d6a72 24.5% 26.2%, #d9d6db 26.2% 27.2%, #b6b3b9 27.2% 46%, #6d6a72 46% 47.7%, #d9d6db 47.7% 48.7%, #b6b3b9 48.7% 69%, #6d6a72 69% 70.7%, #d9d6db 70.7% 71.7%, #b6b3b9 71.7% 86%, #6d6a72 86% 87.7%, #d9d6db 87.7% 88.7%, #b6b3b9 88.7% 100%) no-repeat right top / 16% 100%,
+    linear-gradient(180deg, #c3c0c6, #b4b1b8 55%, #a8a5ac);
+  box-shadow: inset 0 2px 0 #e4e1e6, inset 0 -2px 0 #8f8c94, 0 5px 11px #00000073;
+}
+.dashboard-game-poster::before,
+.dashboard-empty-shelf > div::before { position: absolute; left: 20%; right: 19%; bottom: 6px; height: 23%; border-radius: 4px; background: linear-gradient(180deg, #9d9aa2, #b0adb4); box-shadow: inset 0 3px 6px #00000066, inset 0 -1px 0 #ffffff4d, 0 1px 0 #ffffff66; content: ''; }
+.dashboard-game-poster::after,
+.dashboard-empty-shelf > div::after { position: absolute; left: 27%; right: 26%; bottom: 4%; height: 11%; clip-path: polygon(0 0, 38% 0, 43% 55%, 57% 55%, 62% 0, 100% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, #8f8c94 0 3px, #b4b1b8 3px, #aaa7ae 70%, #b7b4ba 100%); content: ''; }
+.dashboard-game-poster-label { position: relative; display: flex; min-height: 56px; flex: 1; flex-direction: column; justify-content: flex-end; overflow: hidden; border: 2px solid #141417; border-radius: 3px; background: radial-gradient(circle at 70% 25%, #eb5bfcaa, transparent 34%), linear-gradient(140deg, #302782, #25103d 62%, #b72681); box-shadow: 0 1px 3px #00000080; }
+.dashboard-game-poster-label::before { position: absolute; inset: 20px -50px; border: 2px solid #d75bff88; border-radius: 50%; box-shadow: 0 0 33px #f725ad; transform: rotate(-32deg); content: ''; }
+.dashboard-game-poster-label::after { position: absolute; inset: 55% -10% -25%; transform: perspective(170px) rotateX(62deg); background: repeating-linear-gradient(0deg, transparent 0 12px, #d356ff77 13px 14px), repeating-linear-gradient(90deg, transparent 0 24px, #ff4dcb88 25px 26px); content: ''; }
+// z-index acima dos pseudo-elementos da arte: a capa precisa ficar limpa e
+// nítida, sem a grade neon do fallback sendo pintada por cima dela.
+.dashboard-game-poster-img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
 .dashboard-game-poster--1 { background: radial-gradient(circle at 55% 30%, #79ebfbaa, transparent 32%), linear-gradient(150deg, #135896, #212073 62%, #701db8); }
 .dashboard-game-poster--2 { background: radial-gradient(circle at 45% 25%, #f85989aa, transparent 32%), linear-gradient(150deg, #591240, #26113d 62%, #9d164f); }
 .dashboard-game-poster--3 { background: radial-gradient(circle at 50% 22%, #ffc78baa, transparent 36%), linear-gradient(150deg, #08778c, #174478 62%, #5e38a7); }
-.dashboard .auth-game-play, .dashboard .auth-game-status { align-self: start; margin: auto 8px 0; font-size: 9px; }
+.dashboard .auth-game-play, .dashboard .auth-game-status { align-self: start; margin: auto 8px 0; font-size: 11px; }
 .dashboard .auth-games-empty { display: flex; min-height: 122px; align-items: center; justify-content: center; margin: 0; border: 1px dashed #873d9e; background: radial-gradient(circle at 50% 100%, #a82ca544, transparent 65%), #160a31; font-size: 12px; }
-.dashboard-empty-shelf { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
-.dashboard-empty-shelf > div { position: relative; display: grid; min-height: 147px; overflow: hidden; place-items: end center; padding: 13px 4px; border: 1px solid #874cae; border-radius: 6px; background: radial-gradient(circle at 58% 30%, #ff48d688, transparent 36%), linear-gradient(155deg, #1a286c, #18092f 58%, #8d1462); }
-.dashboard-empty-shelf > div::before { position: absolute; top: 17%; left: 10%; width: 80%; height: 80%; border: 2px solid #f181ee8c; border-radius: 50%; box-shadow: 0 0 24px #f725ad77; transform: rotate(-32deg); content: ''; }
-.dashboard-empty-shelf > div:nth-child(2) { background: radial-gradient(circle at 55% 25%, #67d9ffaa, transparent 34%), linear-gradient(160deg, #11649a, #251345 65%, #7642a8); }
-.dashboard-empty-shelf > div:nth-child(3) { background: radial-gradient(circle at 62% 20%, #fa678baa, transparent 32%), linear-gradient(160deg, #7a164c, #190926 65%, #340a4f); }
-.dashboard-empty-shelf > div:nth-child(4) { background: radial-gradient(circle at 50% 22%, #fbd584aa, transparent 30%), linear-gradient(155deg, #5e6496, #144659 64%, #45216a); }
-.dashboard-empty-shelf > div:nth-child(5) { background: radial-gradient(circle at 55% 28%, #7f8ffaaa, transparent 35%), linear-gradient(150deg, #292758, #0b0b29 65%, #532578); }
-.dashboard-empty-shelf > div:nth-child(6) { background: radial-gradient(circle at 50% 25%, #d8a5c8aa, transparent 35%), linear-gradient(145deg, #5f3a67, #170d2a 65%, #542568); }
-.dashboard-empty-shelf span { position: relative; z-index: 1; color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .17em; text-align: center; text-shadow: 0 0 12px t.$pink; }
-.dashboard .auth-games-empty { min-height: 34px; margin-top: 8px; padding: 6px; font-size: 10px; }
+.dashboard-empty-shelf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+// Slots vazios: mesma carcaça de cartucho (regras compartilhadas acima),
+// com rótulo escuro tracejado "EM BREVE".
+.dashboard-empty-shelf span { display: grid; flex: 1; min-width: 0; place-items: center; border: 2px dashed #ffffff2e; border-radius: 3px; background: linear-gradient(160deg, #1d1d24, #131318); color: #9a97b5; font-size: 10px; font-weight: 800; letter-spacing: .17em; text-align: center; }
+.dashboard .auth-games-empty { min-height: 34px; margin-top: 8px; padding: 6px; font-size: 12px; }
 
 .dashboard-upcoming-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .dashboard-upcoming-tile { position: relative; display: flex; height: 105px; overflow: hidden; align-items: flex-start; padding: 8px; border: 1px solid #7452b9; border-radius: 6px; background: radial-gradient(circle at 73% 35%, #5ee8ff88, transparent 35%), linear-gradient(130deg, #15396b, #0e0a30 62%, #51227e); }
@@ -83,7 +110,11 @@
 .dashboard .auth-admin { margin: 27px 8px 0; padding: 18px; @include m.panel(#aa3d9b); }
 .dashboard .auth-admin h3 { font-size: 14px; }
 .dashboard .auth-admin-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 16px; }
-.dashboard .auth-admin-available, .dashboard .auth-admin-actions { grid-column: 1 / -1; }
+.dashboard .auth-admin-available, .dashboard .auth-admin-actions, .dashboard .auth-field--cover { grid-column: 1 / -1; }
+.dashboard .auth-field--cover input[type='file'] { width: 100%; padding: 7px 0; color: t.$muted; font-size: 12px; }
+.dashboard .auth-field--cover input[type='file']::file-selector-button { margin-right: 10px; padding: 6px 12px; border: 1px solid #aa3d9b; border-radius: 5px; background: #2b0f3f; color: #ffd6f4; font-size: 11px; font-weight: 700; cursor: pointer; }
+.dashboard .auth-cover-preview { display: flex; align-items: center; gap: 10px; margin: 8px 0 0; color: t.$muted; font-size: 11px; }
+.dashboard .auth-cover-preview img { width: 84px; height: 56px; flex: none; object-fit: cover; border: 1px solid #aa3d9b; border-radius: 5px; background: #171030; }
 
 @include m.below(1200px) {
   .dashboard-topbar { gap: 12px; }
@@ -103,8 +134,8 @@
   .dashboard-aside { grid-column: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .dashboard-radio { min-width: 200px; }
   .dashboard-radio-name { display: none; }
-  .dashboard .auth-games-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .dashboard-empty-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dashboard .auth-games-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dashboard-empty-shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @include m.below(700px) {
@@ -124,8 +155,8 @@
   .dashboard-nav-item { justify-content: flex-start; width: 100%; height: 42px; overflow: visible; padding: 6px 10px; font-size: 12px; }
   .dashboard-nav-item small { display: block; }
   .dashboard-aside { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 20px; }
-  .dashboard .auth-games-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .dashboard-empty-shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dashboard .auth-games-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-empty-shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @include m.below(480px) {
